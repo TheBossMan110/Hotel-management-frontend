@@ -67,7 +67,7 @@ export const authAPI = {
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get('/auth/me'),
   refreshToken: () => api.post('/auth/refresh'),
-  updatePassword: (currentPassword, newPassword) => 
+  updatePassword: (currentPassword, newPassword) =>
     api.put('/auth/password', { currentPassword, newPassword }),
   forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
   updateProfile: async (updates) => {
@@ -82,11 +82,11 @@ export const roomsAPI = {
   getAll: (params) => api.get('/rooms', { params }),
   getById: (id) => api.get(`/rooms/${id}`),
   getTypes: () => api.get('/rooms/types'),
-  checkAvailability: (id, checkIn, checkOut) => 
+  checkAvailability: (id, checkIn, checkOut) =>
     api.get(`/rooms/${id}/availability`, { params: { checkIn, checkOut } }),
   create: (data) => api.post('/rooms', data),
   update: (id, data) => api.put(`/rooms/${id}`, data),
-  updateStatus: (id, status, cleaningStatus) => 
+  updateStatus: (id, status, cleaningStatus) =>
     api.patch(`/rooms/${id}/status`, { status, cleaningStatus }),
   delete: (id) => api.delete(`/rooms/${id}`)
 };
@@ -123,7 +123,7 @@ export const invoicesAPI = {
   getById: (id) => api.get(`/invoices/${id}`),
   create: (data) => api.post('/invoices', data),
   addItem: (id, item) => api.post(`/invoices/${id}/items`, item),
-  recordPayment: (id, amount, method) => 
+  recordPayment: (id, amount, method) =>
     api.post(`/invoices/${id}/payment`, { amount, method }),
   send: (id) => api.post(`/invoices/${id}/send`),
   downloadPDF: (id) => api.get(`/invoices/${id}/pdf`, { responseType: 'blob' })
@@ -149,7 +149,7 @@ export const tasksAPI = {
   create: (data) => api.post('/tasks', data),
   update: (id, data) => api.put(`/tasks/${id}`, data),
   updateStatus: (id, status) => api.patch(`/tasks/${id}/status`, { status }),
-  updateChecklist: (id, itemIndex, completed) => 
+  updateChecklist: (id, itemIndex, completed) =>
     api.patch(`/tasks/${id}/checklist/${itemIndex}`, { completed }),
   addNote: (id, content) => api.post(`/tasks/${id}/notes`, { content }),
   delete: (id) => api.delete(`/tasks/${id}`)
@@ -176,7 +176,7 @@ export const settingsAPI = {
   updateIntegrations: (data) => api.put('/settings/integrations', data),
   updateProfile: (data) => api.put('/settings/profile', data),
   changePassword: (data) => api.post('/settings/password', data),
-  toggleMaintenance: (enabled, message) => 
+  toggleMaintenance: (enabled, message) =>
     api.post('/settings/maintenance', { enabled, message })
 };
 
