@@ -9,10 +9,11 @@ const stats = [
 ]
 
 const team = [
-  { name: 'Alexandra Reynolds', role: 'General Manager',         bio: '20+ years in luxury hospitality' },
-  { name: 'Marcus Chen',        role: 'Executive Chef',           bio: 'Michelin-starred culinary expertise' },
-  { name: 'Isabella Martinez',  role: 'Guest Relations Director', bio: 'Dedicated to exceptional experiences' },
-  { name: 'James Thompson',     role: 'Spa Director',             bio: 'Wellness and relaxation specialist' },
+  { name: 'Zaki Haider', role: 'Backend Developer',         bio: 'Integrate APIs and backend functionality' },
+  { name: 'Muhammad Mudasir',        role: 'Frontend Developer',           bio: 'Frontend design and development' },
+  { name: 'Abdul Sami',  role: 'UI/UX Designer', bio: 'UI/UX design and development' },
+  { name: 'Muhammad Fayaz',     role: 'UI/UX Designer',             bio: 'UI/UX design and development' },
+  { name: 'Hassan Shah',     role: '3D Artist',             bio: '3D model and animation' },  
 ]
 
 const values = [
@@ -108,7 +109,7 @@ export default function AboutPage() {
             <p className="text-xs font-body tracking-[0.3em] uppercase mb-3" style={{ color: '#C9A84C' }}>The People Behind</p>
             <h2 className="font-display font-light" style={{ fontSize: 'clamp(28px, 4vw, 48px)', color: '#F8F4EF' }}>Leadership Team</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
             {team.map((member, i) => (
               <div key={i} className="text-center p-6 rounded-2xl gold-border-glow" style={{ background: '#1A1A1A' }}>
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
