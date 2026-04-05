@@ -17,8 +17,8 @@ const typeIcons = {
 }
 
 const priorityColors = {
-  low: 'border-l-gray-300',
-  normal: 'border-l-blue-400',
+  low: 'border-l-gray-600',
+  normal: 'border-l-amber-400',
   high: 'border-l-orange-400',
   urgent: 'border-l-red-500'
 }
@@ -124,7 +124,8 @@ export default function NotificationBell() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 top-12 w-[380px] max-h-[520px] bg-[#1a1f2e] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 notification-dropdown-enter">
+        <div className="absolute right-0 top-12 w-[380px] max-h-[520px] overflow-hidden z-50 notification-dropdown-enter"
+          style={{ background: '#0F0F0F', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '1.25rem', boxShadow: '0 25px 60px rgba(0,0,0,0.7)' }}>
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-white/5">
             <div className="flex items-center gap-2">
@@ -139,7 +140,10 @@ export default function NotificationBell() {
               {unreadCount > 0 && (
                 <button
                   onClick={() => markAllRead()}
-                  className="text-xs text-blue-400 hover:text-blue-300 px-2 py-1 rounded-lg hover:bg-white/5 transition-colors"
+                  className="text-xs px-2 py-1 rounded-lg transition-colors"
+                  style={{ color: '#C9A84C' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(201,168,76,0.08)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                   title="Mark all as read"
                 >
                   <CheckCheck className="w-4 h-4" />
@@ -158,7 +162,7 @@ export default function NotificationBell() {
           <div className="overflow-y-auto max-h-[420px] custom-scrollbar">
             {isLoading && notifications.length === 0 ? (
               <div className="flex items-center justify-center py-12">
-                <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#C9A84C', borderTopColor: 'transparent' }} />
               </div>
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4">
@@ -173,7 +177,7 @@ export default function NotificationBell() {
                   className={`group flex items-start gap-3 px-5 py-3.5 border-b border-white/5 transition-all duration-200 cursor-pointer border-l-[3px] ${priorityColors[notif.priority] || 'border-l-transparent'} ${
                     notif.isRead
                       ? 'bg-transparent hover:bg-white/[0.03]'
-                      : 'bg-blue-500/5 hover:bg-blue-500/10'
+                      : 'bg-amber-500/5 hover:bg-amber-500/10'
                   }`}
                   style={{ animationDelay: `${index * 40}ms` }}
                   onClick={() => !notif.isRead && markRead(notif._id)}
@@ -199,7 +203,7 @@ export default function NotificationBell() {
                   {/* Actions */}
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {!notif.isRead && (
-                      <div className="w-2 h-2 rounded-full bg-blue-400 notification-unread-dot" title="Unread" />
+                      <div className="w-2 h-2 rounded-full notification-unread-dot" style={{ background: '#C9A84C' }} title="Unread" />
                     )}
                     <button
                       onClick={(e) => { e.stopPropagation(); deleteNotification(notif._id) }}

@@ -344,6 +344,7 @@ export default function BookingPage() {
                         placeholder="4242 4242 4242 4242"
                         value={payment.cardNumber}
                         inputMode="numeric"
+                        autoComplete="off"
                         onChange={e => setPayment({ ...payment, cardNumber: formatCardNumber(e.target.value) })}
                       />
                     </div>
@@ -358,6 +359,7 @@ export default function BookingPage() {
                         placeholder="MM/YY"
                         value={payment.expiry}
                         inputMode="numeric"
+                        autoComplete="off"
                         onChange={e => setPayment({ ...payment, expiry: formatExpiry(e.target.value) })}
                       />
                       {paymentErrors.expiry && <p className="text-xs mt-1 font-body" style={{ color: '#f87171' }}>⚠ {paymentErrors.expiry}</p>}
@@ -369,6 +371,7 @@ export default function BookingPage() {
                         placeholder="123"
                         maxLength={4}
                         inputMode="numeric"
+                        autoComplete="off"
                         value={payment.cvc}
                         onChange={e => setPayment({ ...payment, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) })}
                       />
@@ -382,6 +385,7 @@ export default function BookingPage() {
                       className="luxury-input w-full h-10 px-3 text-sm"
                       placeholder="John Doe"
                       value={payment.nameOnCard}
+                      autoComplete="off"
                       onChange={e => setPayment({ ...payment, nameOnCard: e.target.value })}
                     />
                     {paymentErrors.nameOnCard && <p className="text-xs mt-1 font-body" style={{ color: '#f87171' }}>⚠ {paymentErrors.nameOnCard}</p>}

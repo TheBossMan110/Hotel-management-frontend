@@ -161,45 +161,48 @@ export default function StaffTasks() {
     const isUpdating = updatingStatus === tid
 
     return (
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white border border-gray-200 rounded-xl gap-3 hover:shadow-sm transition-shadow">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl gap-3 transition-all hover:scale-[1.01]" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.15)' }}>
         <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-            task.status === 'in-progress' ? 'bg-blue-100' :
-            task.status === 'completed'   ? 'bg-green-100' : 'bg-amber-100'
-          }`}>
-            <svg className={`w-5 h-5 ${
-              task.status === 'in-progress' ? 'text-blue-600' :
-              task.status === 'completed'   ? 'text-green-600' : 'text-amber-600'
-            }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+            style={task.status === 'in-progress' ? { background: 'rgba(201,168,76,0.15)', color: '#C9A84C' } :
+                   task.status === 'completed'   ? { background: 'rgba(34,197,94,0.15)', color: '#4ade80' } :
+                                                   { background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <p className="font-medium text-gray-900 truncate">{task.title}</p>
-              {getPriorityBadge(task.priority)}
+              <p className="font-medium truncate" style={{ color: '#F8F4EF' }}>{task.title}</p>
             </div>
-            <div className="flex flex-wrap gap-2 text-sm text-gray-500">
+            <div className="flex flex-wrap gap-2 text-sm" style={{ color: 'rgba(248,244,239,0.5)' }}>
               {roomNum && <span>Room {roomNum}</span>}
-              {getTypePill(task.type)}
+              <span style={{ color: '#C9A84C' }}>{(task.type || '').replace(/-/g, ' ')}</span>
               {task.dueDate && <span>Due: {formatDate(task.dueDate)}</span>}
-              {task.assignedTo && <span className="text-blue-600">→ {task.assignedTo.firstName || 'Staff'}</span>}
+              {task.assignedTo && <span style={{ color: '#C9A84C' }}>→ {task.assignedTo.firstName || 'Staff'}</span>}
             </div>
           </div>
         </div>
 
         <div className="flex gap-2 flex-shrink-0">
           <button onClick={() => setSelectedTask(task)}
-            className="px-3 py-1.5 rounded-lg text-sm border border-gray-300 text-gray-700 hover:bg-gray-50">View</button>
+            className="px-3 py-1.5 rounded-lg text-sm transition-colors"
+            style={{ border: '1px solid rgba(201,168,76,0.2)', color: '#F8F4EF' }}
+            onMouseOver={e => e.currentTarget.style.background = 'rgba(201,168,76,0.1)'}
+            onMouseOut={e => e.currentTarget.style.background = 'transparent'}>View</button>
           {task.status === 'pending' && (
             <button disabled={isUpdating} onClick={() => handleStatusChange(tid, 'in-progress')}
-              className="px-3 py-1.5 rounded-lg text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
+              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+              style={{ background: '#C9A84C', color: '#0A0A0A' }}
+              onMouseOver={e => e.currentTarget.style.background = '#E8C97A'}
+              onMouseOut={e => e.currentTarget.style.background = '#C9A84C'}>
               {isUpdating ? '…' : 'Start'}
             </button>
           )}
           {task.status === 'in-progress' && (
             <button disabled={isUpdating} onClick={() => handleStatusChange(tid, 'completed')}
-              className="px-3 py-1.5 rounded-lg text-sm bg-green-600 text-white hover:bg-green-700 disabled:opacity-50">
+              className="px-3 py-1.5 rounded-lg text-sm transition-colors font-medium"
+              style={{ background: '#4ade80', color: '#0A0A0A' }}>
               {isUpdating ? '…' : 'Done'}
             </button>
           )}
@@ -209,54 +212,62 @@ export default function StaffTasks() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-fadeIn">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-gray-900">
+          <h1 className="text-2xl font-display font-light" style={{ color: '#F8F4EF' }}>
             {isManager ? 'Task Management' : 'My Tasks'}
           </h1>
-          <p className="text-gray-500">
+          <p className="text-sm mt-1" style={{ color: 'rgba(248,244,239,0.45)', fontFamily: 'DM Sans, sans-serif' }}>
             {isManager ? 'Manage and assign tasks to staff' : 'View and manage your assigned tasks'}
           </p>
         </div>
         <div className="flex gap-2">
           {isManager && (
             <button onClick={() => { setShowAssignModal(true); setAssignSuccess(false) }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm bg-blue-600 text-white hover:bg-blue-700 font-medium">
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+              style={{ background: '#C9A84C', color: '#0A0A0A' }}
+              onMouseOver={e => e.currentTarget.style.background = '#E8C97A'}
+              onMouseOut={e => e.currentTarget.style.background = '#C9A84C'}>
               <Plus className="w-4 h-4" /> Assign Task
             </button>
           )}
           <button onClick={() => fetchMyTasks()}
-            className="px-4 py-2 rounded-xl text-sm border border-gray-300 text-gray-700 hover:bg-gray-50">Refresh</button>
+            className="px-4 py-2 rounded-xl text-sm transition-colors"
+            style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.2)', color: '#F8F4EF' }}
+            onMouseOver={e => e.currentTarget.style.background = 'rgba(201,168,76,0.1)'}
+            onMouseOut={e => e.currentTarget.style.background = '#1A1A1A'}>Refresh</button>
         </div>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Pending',     count: pending.length,    color: 'text-amber-600', bg: 'bg-amber-50' },
-          { label: 'In Progress', count: inProgress.length, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Completed',   count: completed.length,  color: 'text-green-600', bg: 'bg-green-50' }
-        ].map(({ label, count, color, bg }) => (
-          <div key={label} className={`${bg} border rounded-xl p-4 text-center`}>
-            <p className={`text-3xl font-bold ${color}`}>{count}</p>
-            <p className="text-sm text-gray-600">{label}</p>
+          { label: 'Pending',     count: pending.length,    color: '#fbbf24', bg: 'rgba(251,191,36,0.05)', border: 'rgba(251,191,36,0.15)' },
+          { label: 'In Progress', count: inProgress.length, color: '#C9A84C', bg: 'rgba(201,168,76,0.05)', border: 'rgba(201,168,76,0.15)' },
+          { label: 'Completed',   count: completed.length,  color: '#4ade80', bg: 'rgba(34,197,94,0.05)', border: 'rgba(34,197,94,0.15)' }
+        ].map(({ label, count, color, bg, border }) => (
+          <div key={label} className="rounded-xl p-4 text-center transition-transform hover:scale-[1.02]" style={{ background: bg, border: `1px solid ${border}` }}>
+            <p className="text-3xl font-display" style={{ color }}>{count}</p>
+            <p className="text-sm mt-1" style={{ color: 'rgba(248,244,239,0.7)' }}>{label}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <div className="rounded-xl p-4" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}>
         <div className="flex flex-col sm:flex-row gap-4">
           <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm">
+            className="px-3 py-2 rounded-lg text-sm outline-none transition-colors"
+            style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.2)', color: '#F8F4EF' }}>
             <option value="all">All Priorities</option>
             <option value="high">High</option>
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
           <select value={filterType} onChange={e => setFilterType(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm">
+            className="px-3 py-2 rounded-lg text-sm outline-none transition-colors"
+            style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.2)', color: '#F8F4EF' }}>
             <option value="all">All Types</option>
             <option value="housekeeping">Housekeeping</option>
             <option value="maintenance">Maintenance</option>
@@ -307,24 +318,24 @@ export default function StaffTasks() {
           {/* Manager-only Reports tab */}
           {isManager && (
             <TabsContent value="reports">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-orange-500" /> Guest Reports (assign to staff)
+              <h3 className="text-lg font-display font-light mb-4 flex items-center gap-2" style={{ color: '#F8F4EF' }}>
+                <AlertTriangle className="w-5 h-5" style={{ color: '#fb923c' }} /> Guest Reports (assign to staff)
               </h3>
               {reports.length === 0 ? (
-                <div className="bg-white border rounded-xl p-12 text-center"><p className="text-gray-500">No reports</p></div>
+                <div className="rounded-xl p-12 text-center" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.1)' }}><p style={{ color: 'rgba(248,244,239,0.4)' }}>No reports</p></div>
               ) : (
                 <div className="flex flex-col gap-3">
                   {reports.map((rpt, i) => (
-                    <div key={rpt._id || i} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
+                    <div key={rpt._id || i} className="rounded-xl p-4 hover:shadow-lg transition-all" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.15)' }}>
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="font-medium text-gray-900">{rpt.title}</p>
-                          <p className="text-sm text-gray-600 mt-1">{rpt.description}</p>
-                          <div className="flex gap-3 mt-2 text-xs text-gray-400">
+                          <p className="font-medium" style={{ color: '#F8F4EF' }}>{rpt.title}</p>
+                          <p className="text-sm mt-1" style={{ color: 'rgba(248,244,239,0.6)' }}>{rpt.description}</p>
+                          <div className="flex gap-3 mt-2 text-xs" style={{ color: 'rgba(248,244,239,0.4)' }}>
                             <span>🏷️ {rpt.category}</span>
                             <span>🏨 Room: {rpt.room?.roomNumber || 'N/A'}</span>
-                            <span className={`px-2 py-0.5 rounded-full ${rpt.priority === 'high' || rpt.priority === 'critical' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{rpt.priority}</span>
-                            <span className={`px-2 py-0.5 rounded-full ${rpt.status === 'open' ? 'bg-red-100 text-red-700' : rpt.status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{rpt.status}</span>
+                            <span className="px-2 py-0.5 rounded-full" style={rpt.priority === 'critical' ? { background: 'rgba(239,68,68,0.15)', color: '#f87171' } : { background: 'rgba(251,191,36,0.15)', color: '#fbbf24' }}>{rpt.priority}</span>
+                            <span className="px-2 py-0.5 rounded-full" style={rpt.status === 'open' ? { background: 'rgba(239,68,68,0.15)', color: '#f87171' } : rpt.status === 'resolved' ? { background: 'rgba(34,197,94,0.15)', color: '#4ade80' } : { background: 'rgba(201,168,76,0.15)', color: '#C9A84C' }}>{rpt.status}</span>
                           </div>
                         </div>
                         <button onClick={() => {
@@ -338,7 +349,10 @@ export default function StaffTasks() {
                           })
                           setShowAssignModal(true)
                           setAssignSuccess(false)
-                        }} className="px-3 py-1.5 rounded-lg text-xs bg-blue-600 text-white hover:bg-blue-700 font-medium whitespace-nowrap">
+                        }} className="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
+                        style={{ background: '#C9A84C', color: '#0A0A0A' }}
+                        onMouseOver={e => e.currentTarget.style.background = '#E8C97A'}
+                        onMouseOut={e => e.currentTarget.style.background = '#C9A84C'}>
                           Assign to Staff
                         </button>
                       </div>

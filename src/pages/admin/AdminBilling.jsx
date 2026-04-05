@@ -285,38 +285,36 @@ export default function AdminBilling() {
         </Card>
       </div>
 
-      {/* Filters — Fix #7: single clean row, no duplicate boxes */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search invoices..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select 
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-40"
-              options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'paid', label: 'Paid' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'overdue', label: 'Overdue' },
-                { value: 'cancelled', label: 'Cancelled' }
-              ]}
+      {/* Filters — Clean row */}
+      <div className="p-4 rounded-xl" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.15)' }}>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search invoices..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
             />
-            <Button variant="outline" onClick={handleExportCSV}>
-              <Download className="w-4 h-4 mr-2" />
-              Export CSV
-            </Button>
           </div>
-        </CardContent>
-      </Card>
+          <Select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="min-w-[150px]"
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'paid', label: 'Paid' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'overdue', label: 'Overdue' },
+              { value: 'cancelled', label: 'Cancelled' }
+            ]}
+          />
+          <Button variant="outline" onClick={handleExportCSV}>
+            <Download className="w-4 h-4 mr-2" />
+            Export CSV
+          </Button>
+        </div>
+      </div>
 
       {/* Invoices Table */}
       <Card>

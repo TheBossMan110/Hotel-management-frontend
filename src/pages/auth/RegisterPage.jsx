@@ -77,13 +77,12 @@ export default function RegisterPage() {
       {/* RIGHT — Form */}
       <div className="flex-1 flex items-center justify-center px-6 py-12 overflow-y-auto" style={{ background: '#0A0A0A' }}>
         <div className="w-full max-w-sm">
-          <Link to="/" className="block text-center mb-8">
-            <span className="font-display text-3xl tracking-widest" style={{ color: '#C9A84C', letterSpacing: '0.25em' }}>
-              GRANDEUR
-            </span>
+          <Link to="/" className="block text-center ">
+            <img src="/logo.png" alt="LuxuryStay Hospitality" className="h-25 w-auto mx-auto"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(201,168,76,0.3))' }} />
           </Link>
 
-          <h2 className="font-display font-light text-3xl mb-2 text-center" style={{ color: '#F8F4EF' }}>Create Account</h2>
+          <h2 className="font-display font-light text-3xl text-center" style={{ color: '#F8F4EF' }}>Create Account</h2>
           <p className="text-xs font-body text-center mb-8" style={{ color: 'rgba(248,244,239,0.45)' }}>
             {returnUrl ? 'Create an account to complete your booking' : 'Join Grand Azure for exclusive benefits'}
           </p>

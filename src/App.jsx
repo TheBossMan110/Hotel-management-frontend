@@ -40,12 +40,14 @@ const AdminBilling = lazy(() => import('./pages/admin/AdminBilling'))
 const AdminReports = lazy(() => import('./pages/admin/AdminReports'))
 const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'))
 const AdminServiceRequests = lazy(() => import('./pages/admin/AdminServiceRequests'))
+const AdminProfile = lazy(() => import('./pages/admin/AdminProfile'))
 
 // Staff Portal
 const StaffDashboard = lazy(() => import('./pages/staff/StaffDashboard'))
 const StaffHousekeeping = lazy(() => import('./pages/staff/StaffHousekeeping'))
 const StaffMaintenance = lazy(() => import('./pages/staff/StaffMaintenance'))
 const StaffTasks = lazy(() => import('./pages/staff/StaffTasks'))
+const StaffProfile = lazy(() => import('./pages/staff/StaffProfile'))
 
 export default function App() {
   const { initAuth } = useAuthStore()
@@ -114,6 +116,7 @@ export default function App() {
             <Route path="bookings" element={<AdminBookings />} />
             <Route path="guests" element={<AdminGuests />} />
             <Route path="staff" element={<AdminStaff />} />
+            <Route path="profile" element={<AdminProfile />} />
             <Route path="billing" element={<AdminBilling />} />
             <Route path="reports" element={<AdminReports />} />
             <Route path="settings" element={<AdminSettings />} />
@@ -133,6 +136,7 @@ export default function App() {
             <Route path="housekeeping" element={<StaffHousekeeping />} />
             <Route path="maintenance" element={<StaffMaintenance />} />
             <Route path="tasks" element={<StaffTasks />} />
+            <Route path="profile" element={<StaffProfile />} />
           </Route>
         </Routes>
       </Suspense>

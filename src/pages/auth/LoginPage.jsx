@@ -89,10 +89,9 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-12" style={{ background: '#0A0A0A' }}>
         <div className="w-full max-w-sm">
           {/* Logo */}
-          <Link to="/" className="block text-center mb-10">
-            <span className="font-display text-3xl tracking-widest" style={{ color: '#C9A84C', letterSpacing: '0.25em' }}>
-              GRANDEUR
-            </span>
+          <Link to="/" className="block text-center mb-8">
+            <img src="/logo.png" alt="LuxuryStay Hospitality" className="h-30 w-auto mx-auto"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(201,168,76,0.3))' }} />
           </Link>
 
           <h2 className="font-display font-light text-3xl mb-2 text-center" style={{ color: '#F8F4EF' }}>Sign In</h2>
@@ -170,11 +169,11 @@ export default function LoginPage() {
               <div className="w-full" style={{ height: 1, background: '#2A2A2A' }} />
             </div>
             <div className="relative flex justify-center">
-              <span className="px-3 text-xs font-body" style={{ background: '#0A0A0A', color: 'rgba(248,244,239,0.35)' }}>Demo Accounts</span>
+              <span className="px-3 text-xs font-body" style={{ background: '#0A0A0A', color: 'rgba(248,244,239,0.35)' }}>LuxuryStay Hospitality</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 mb-8">
+          {/* <div className="grid grid-cols-3 gap-2 mb-8">
             {['admin', 'staff', 'guest'].map(type => (
               <button key={type} type="button" onClick={() => fillDemo(type)}
                 className="py-2 rounded-xl text-xs font-body capitalize text-center transition-all duration-200"
@@ -185,7 +184,7 @@ export default function LoginPage() {
                 <span className="text-[10px]">{type}@...</span>
               </button>
             ))}
-          </div>
+          </div> */}
 
           <p className="text-center text-xs font-body" style={{ color: 'rgba(248,244,239,0.4)' }}>
             {`Don't have an account? `}

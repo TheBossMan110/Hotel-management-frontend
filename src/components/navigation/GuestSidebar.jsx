@@ -6,9 +6,9 @@ import {
   User,
   MessageSquare,
   Home,
-  ConciergeBell
+  ConciergeBell,
+  ChevronRight
 } from 'lucide-react'
-import { cn } from '../../lib/utils'
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard',    href: '/guest' },
@@ -23,38 +23,68 @@ export default function GuestSidebar() {
   const location = useLocation()
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-72 bg-secondary text-secondary-foreground hidden lg:flex flex-col">
+    <aside className="fixed left-0 top-0 bottom-0 w-72 hidden lg:flex flex-col" style={{
+      background: 'linear-gradient(180deg, #0D0D0D 0%, #111111 100%)',
+      borderRight: '1px solid rgba(201,168,76,0.15)',
+      boxShadow: '4px 0 24px rgba(0,0,0,0.4)'
+    }}>
       {/* Logo */}
-      <div className="p-6 border-b border-secondary-foreground/10">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-serif font-bold text-lg">GH</span>
-          </div>
-          <div>
-            <span className="font-serif text-lg font-semibold block">Grand Horizon</span>
-            <span className="text-xs text-secondary-foreground/60">Guest Portal</span>
-          </div>
+      <div className="p-5" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+        <Link to="/" className="flex items-center group">
+          <img
+            src="/logo.png"
+            alt="LuxuryStay"
+            className="h-20 w-auto transition-all duration-300 group-hover:scale-105"
+            style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.4))' }}
+          />
         </Link>
+        <div className="mt-3 px-1">
+          <span className="text-[10px] font-medium tracking-[0.25em] uppercase"
+            style={{ color: 'rgba(201,168,76,0.7)', fontFamily: 'DM Sans, sans-serif' }}>
+            Guest Portal
+          </span>
+        </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 overflow-y-auto">
-        <ul className="space-y-1">
+      <nav className="flex-1 py-4 px-3 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+        <p className="text-[10px] font-medium uppercase tracking-[0.2em] px-3 mb-3"
+          style={{ color: 'rgba(248,244,239,0.25)', fontFamily: 'DM Sans, sans-serif' }}>
+          Navigation
+        </p>
+        <ul className="space-y-0.5">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.href
             return (
               <li key={item.href}>
                 <Link
                   to={item.href}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-secondary-foreground/70 hover:bg-secondary-foreground/10 hover:text-secondary-foreground'
-                  )}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 relative"
+                  style={{
+                    color: isActive ? '#C9A84C' : 'rgba(248,244,239,0.55)',
+                    background: isActive ? 'rgba(201,168,76,0.12)' : 'transparent',
+                    border: isActive ? '1px solid rgba(201,168,76,0.2)' : '1px solid transparent',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'rgba(248,244,239,0.04)'
+                      e.currentTarget.style.color = 'rgba(248,244,239,0.9)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.color = 'rgba(248,244,239,0.55)'
+                    }
+                  }}
                 >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r-full"
+                      style={{ background: '#C9A84C' }} />
+                  )}
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  <span className="flex-1" style={{ fontFamily: 'DM Sans, sans-serif' }}>{item.label}</span>
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 opacity-60" />}
                 </Link>
               </li>
             )
@@ -63,12 +93,15 @@ export default function GuestSidebar() {
       </nav>
 
       {/* Back to Site */}
-      <div className="p-4 border-t border-secondary-foreground/10">
+      <div className="p-3" style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}>
         <Link
           to="/"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-secondary-foreground/70 hover:bg-secondary-foreground/10 hover:text-secondary-foreground transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+          style={{ color: 'rgba(248,244,239,0.5)', fontFamily: 'DM Sans, sans-serif' }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,244,239,0.04)'; e.currentTarget.style.color = 'rgba(248,244,239,0.8)' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(248,244,239,0.5)' }}
         >
-          <Home className="w-5 h-5" />
+          <Home className="w-4 h-4" />
           Back to Website
         </Link>
       </div>

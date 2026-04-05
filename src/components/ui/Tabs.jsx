@@ -70,9 +70,7 @@ export function TabsContent({ value, children, className }) {
   return (
     <div
       className={cn(
-        'mt-4 ring-offset-background',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        'animate-in fade-in-50 duration-200',
+        'mt-4 animate-fadeIn',
         className
       )}
     >

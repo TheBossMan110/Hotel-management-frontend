@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, LogOut, Settings, User, Menu, Mail, Building2, CalendarDays, Users, UserCog } from 'lucide-react'
-import { cn } from '../../lib/utils'
+import { Search, LogOut, Settings, User, Menu, Mail, Building2, CalendarDays, Users, UserCog, X } from 'lucide-react'
 import Avatar from '../ui/Avatar'
 import NotificationBell from './NotificationBell'
 import EmailComposer from '../ui/EmailComposer'
@@ -13,13 +12,6 @@ const typeIcons = {
   guest: Users,
   staff: UserCog,
   booking: CalendarDays
-}
-
-const typeColors = {
-  room: 'bg-blue-100 text-blue-600',
-  guest: 'bg-green-100 text-green-600',
-  staff: 'bg-purple-100 text-purple-600',
-  booking: 'bg-amber-100 text-amber-600'
 }
 
 export default function DashboardHeader({ title }) {
@@ -98,67 +90,92 @@ export default function DashboardHeader({ title }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-background border-b border-border">
+      <header className="sticky top-0 z-40 animate-fadeIn" style={{
+        background: 'rgba(10,10,10,0.92)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(201,168,76,0.12)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.3)'
+      }}>
         <div className="flex items-center justify-between h-16 px-6">
           {/* Mobile Menu Toggle */}
           <button
-            className="lg:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground"
+            className="lg:hidden p-2 -ml-2 rounded-xl transition-all"
+            style={{ color: 'rgba(248,244,239,0.6)' }}
             onClick={() => setShowMobileMenu(!showMobileMenu)}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.08)'; e.currentTarget.style.color = '#C9A84C' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(248,244,239,0.6)' }}
           >
-            <Menu className="w-5 h-5" />
+            {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
           {/* Title */}
-          <h1 className="font-semibold text-lg hidden lg:block">{title}</h1>
+          <h1 className="font-display font-light text-lg hidden lg:block" style={{ color: '#F8F4EF', letterSpacing: '0.02em' }}>{title}</h1>
 
           {/* Search Bar with Live Dropdown */}
           <div className="hidden md:flex items-center flex-1 max-w-md mx-8" ref={searchRef}>
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#C9A84C' }} />
               <input
                 type="text"
-                placeholder="Search rooms, guests, bookings, staff..."
+                placeholder="Search rooms, guests, bookings..."
                 value={searchQuery}
                 onChange={handleSearchChange}
-                onFocus={() => searchResults.length > 0 && setShowSearchDropdown(true)}
-                className={cn(
-                  'w-full h-9 pl-10 pr-4 rounded-md border border-input bg-background text-sm',
-                  'focus:outline-none focus:ring-2 focus:ring-ring'
-                )}
+                onFocus={e => {
+                  if (searchResults.length > 0) setShowSearchDropdown(true)
+                  e.currentTarget.style.borderColor = '#C9A84C'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(201,168,76,0.1)'
+                }}
+                onBlur={e => { e.currentTarget.style.borderColor = 'rgba(201,168,76,0.2)'; e.currentTarget.style.boxShadow = 'none' }}
+                className="w-full h-9 pl-10 pr-4 text-sm transition-all"
+                style={{
+                  background: '#1A1A1A',
+                  border: '1px solid rgba(201,168,76,0.2)',
+                  borderRadius: '0.75rem',
+                  color: '#F8F4EF',
+                  outline: 'none',
+                  fontFamily: 'DM Sans, sans-serif'
+                }}
               />
 
               {/* Search Dropdown */}
               {showSearchDropdown && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-xl z-50 max-h-[400px] overflow-y-auto animate-scaleIn">
+                <div className="absolute top-full left-0 right-0 mt-1.5 rounded-2xl shadow-2xl z-50 max-h-[400px] overflow-y-auto animate-slideDown"
+                  style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}>
                   {searchLoading ? (
-                    <div className="flex items-center justify-center py-6">
-                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span className="ml-2 text-sm text-muted-foreground">Searching...</span>
+                    <div className="flex items-center justify-center py-6 gap-2">
+                      <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#C9A84C', borderTopColor: 'transparent' }} />
+                      <span className="text-sm" style={{ color: 'rgba(248,244,239,0.5)', fontFamily: 'DM Sans, sans-serif' }}>Searching...</span>
                     </div>
                   ) : searchResults.length === 0 ? (
-                    <div className="py-6 text-center text-sm text-muted-foreground">
-                      No results found for "{searchQuery}"
+                    <div className="py-6 text-center text-sm" style={{ color: 'rgba(248,244,239,0.4)', fontFamily: 'DM Sans, sans-serif' }}>
+                      No results for "{searchQuery}"
                     </div>
                   ) : (
                     Object.entries(groupedResults).map(([type, items]) => {
                       const Icon = typeIcons[type] || Search
                       return (
                         <div key={type}>
-                          <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground bg-muted/50">
+                          <div className="px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em]"
+                            style={{ color: '#C9A84C', borderBottom: '1px solid rgba(201,168,76,0.08)', fontFamily: 'DM Sans, sans-serif' }}>
                             {typeLabels[type] || type}
                           </div>
                           {items.map((result) => (
                             <button
                               key={`${result.type}-${result.id}`}
-                              className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-muted/50 transition-colors text-left"
+                              className="w-full flex items-center gap-3 px-4 py-2.5 transition-all text-left"
+                              style={{ color: 'rgba(248,244,239,0.7)' }}
                               onClick={() => handleResultClick(result)}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.06)' }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                             >
-                              <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0', typeColors[type])}>
-                                <Icon className="w-4 h-4" />
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                                style={{ background: 'rgba(201,168,76,0.1)' }}>
+                                <Icon className="w-4 h-4" style={{ color: '#C9A84C' }} />
                               </div>
                               <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium truncate">{result.label}</p>
-                                <p className="text-xs text-muted-foreground truncate capitalize">{result.sublabel}</p>
+                                <p className="text-sm font-medium truncate" style={{ color: '#F8F4EF', fontFamily: 'DM Sans, sans-serif' }}>{result.label}</p>
+                                <p className="text-xs truncate capitalize" style={{ color: 'rgba(248,244,239,0.4)', fontFamily: 'DM Sans, sans-serif' }}>{result.sublabel}</p>
                               </div>
                             </button>
                           ))}
@@ -177,8 +194,11 @@ export default function DashboardHeader({ title }) {
             {user?.role === 'admin' && (
               <button
                 onClick={() => setShowEmailComposer(true)}
-                className="relative p-2 text-muted-foreground hover:text-foreground transition-colors rounded-xl hover:bg-white/10"
+                className="relative p-2 rounded-xl transition-all"
                 title="Compose Email"
+                style={{ color: 'rgba(248,244,239,0.6)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.08)'; e.currentTarget.style.color = '#C9A84C' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(248,244,239,0.6)' }}
               >
                 <Mail className="w-5 h-5" />
               </button>
@@ -190,11 +210,19 @@ export default function DashboardHeader({ title }) {
             {/* User Menu */}
             <div className="relative ml-2">
               <button
-                className="flex items-center gap-3 p-1 rounded-full hover:bg-muted transition-colors"
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl transition-all"
+                style={{ border: '1px solid rgba(201,168,76,0.2)' }}
                 onClick={() => setShowUserMenu(!showUserMenu)}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.08)'; e.currentTarget.style.borderColor = 'rgba(201,168,76,0.4)' }}
+                onMouseLeave={e => { if (!showUserMenu) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(201,168,76,0.2)' } }}
               >
-                <Avatar name={`${user?.firstName || ''} ${user?.lastName || ''}`.trim()} size="sm" />
-                <span className="hidden sm:block text-sm font-medium">{`${user?.firstName || ''} ${user?.lastName || ''}`.trim()}</span>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                  style={{ background: 'linear-gradient(135deg, #C9A84C, #E8C97A)', color: '#0A0A0A', fontFamily: 'DM Sans, sans-serif' }}>
+                  {(user?.firstName?.[0] || '')}{(user?.lastName?.[0] || '')}
+                </div>
+                <span className="hidden sm:block text-sm font-medium" style={{ color: '#F8F4EF', fontFamily: 'DM Sans, sans-serif' }}>
+                  {`${user?.firstName || ''} ${user?.lastName || ''}`.trim()}
+                </span>
               </button>
 
               {showUserMenu && (
@@ -203,33 +231,49 @@ export default function DashboardHeader({ title }) {
                     className="fixed inset-0 z-40"
                     onClick={() => setShowUserMenu(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-56 bg-card border border-border rounded-md shadow-lg z-50 animate-scaleIn">
-                    <div className="p-3 border-b border-border">
-                      <p className="font-medium text-sm">{`${user?.firstName || ''} ${user?.lastName || ''}`.trim()}</p>
-                      <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl shadow-2xl z-50 animate-slideDown overflow-hidden"
+                    style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.2)' }}>
+                    <div className="p-4" style={{ borderBottom: '1px solid rgba(201,168,76,0.1)' }}>
+                      <p className="font-medium text-sm" style={{ color: '#F8F4EF', fontFamily: 'DM Sans, sans-serif' }}>
+                        {`${user?.firstName || ''} ${user?.lastName || ''}`.trim()}
+                      </p>
+                      <p className="text-xs mt-0.5" style={{ color: 'rgba(248,244,239,0.4)', fontFamily: 'DM Sans, sans-serif' }}>{user?.email}</p>
+                      <span className="inline-block mt-1.5 text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(201,168,76,0.12)', color: '#C9A84C', border: '1px solid rgba(201,168,76,0.25)', fontFamily: 'DM Sans, sans-serif' }}>
+                        {user?.role}
+                      </span>
                     </div>
-                    <div className="p-1">
+                    <div className="py-1">
                       <Link
                         to={`/${user?.role}/profile`}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-sm"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm transition-all"
+                        style={{ color: 'rgba(248,244,239,0.7)', fontFamily: 'DM Sans, sans-serif' }}
                         onClick={() => setShowUserMenu(false)}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.06)'; e.currentTarget.style.color = '#C9A84C' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(248,244,239,0.7)' }}
                       >
                         <User className="w-4 h-4" />
                         Profile
                       </Link>
                       <Link
                         to={`/${user?.role}/settings`}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-sm"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm transition-all"
+                        style={{ color: 'rgba(248,244,239,0.7)', fontFamily: 'DM Sans, sans-serif' }}
                         onClick={() => setShowUserMenu(false)}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(201,168,76,0.06)'; e.currentTarget.style.color = '#C9A84C' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(248,244,239,0.7)' }}
                       >
                         <Settings className="w-4 h-4" />
                         Settings
                       </Link>
                     </div>
-                    <div className="p-1 border-t border-border">
+                    <div style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}>
                       <button
-                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive hover:bg-destructive/10 rounded-sm"
+                        className="flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-all text-left"
+                        style={{ color: '#f87171', fontFamily: 'DM Sans, sans-serif' }}
                         onClick={handleLogout}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out

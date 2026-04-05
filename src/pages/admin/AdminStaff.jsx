@@ -46,15 +46,15 @@ export default function AdminStaff() {
 
   const getDepartmentBadge = (dept) => {
     const colors = {
-      housekeeping: 'bg-blue-100 text-blue-700',
-      'front-desk': 'bg-green-100 text-green-700',
-      maintenance: 'bg-amber-100 text-amber-700',
-      'food-service': 'bg-purple-100 text-purple-700',
-      security: 'bg-red-100 text-red-700',
-      management: 'bg-gray-100 text-gray-700'
+      housekeeping: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
+      'front-desk': 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
+      maintenance: 'bg-orange-500/10 text-orange-400 border border-orange-500/20',
+      'food-service': 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
+      security: 'bg-red-500/10 text-red-400 border border-red-500/20',
+      management: 'bg-gray-500/10 text-gray-400 border border-gray-500/20'
     }
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[dept] || 'bg-gray-100'}`}>
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[dept] || 'bg-gray-800 text-gray-400 border border-gray-700'}`}>
         {(dept || '').replace('-', ' ')}
       </span>
     )
@@ -140,26 +140,26 @@ export default function AdminStaff() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold">{stats.total}</p>
-            <p className="text-sm text-muted-foreground">Total Staff</p>
+            <p className="text-3xl font-display" style={{ color: '#F8F4EF' }}>{stats.total}</p>
+            <p className="text-sm text-muted-foreground mt-1">Total Staff</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-green-600">{stats.active}</p>
-            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="text-3xl font-display text-green-500">{stats.active}</p>
+            <p className="text-sm text-muted-foreground mt-1">Active</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-blue-600">{stats.onDuty}</p>
-            <p className="text-sm text-muted-foreground">On Duty</p>
+            <p className="text-3xl font-display" style={{ color: '#C9A84C' }}>{stats.onDuty}</p>
+            <p className="text-sm text-muted-foreground mt-1">On Duty</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <p className="text-3xl font-bold text-amber-600">{departments.length}</p>
-            <p className="text-sm text-muted-foreground">Departments</p>
+            <p className="text-3xl font-display text-amber-500">{departments.length}</p>
+            <p className="text-sm text-muted-foreground mt-1">Departments</p>
           </CardContent>
         </Card>
       </div>
@@ -184,38 +184,38 @@ export default function AdminStaff() {
       )}
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <Input
-                placeholder="Search staff..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Select
-              value={filterDepartment}
-              onChange={(e) => setFilterDepartment(e.target.value)}
-              options={[
-                { value: 'all', label: 'All Departments' },
-                ...departments.map(d => ({ value: d, label: d.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) }))
-              ]}
-            />
-            <Select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'active', label: 'Active' },
-                { value: 'on-duty', label: 'On Duty' },
-                { value: 'off-duty', label: 'Off Duty' },
-                { value: 'on-leave', label: 'On Leave' }
-              ]}
+      <div className="p-4 rounded-xl" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.15)' }}>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <Input
+              placeholder="Search staff..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-        </CardContent>
-      </Card>
+          <Select
+            value={filterDepartment}
+            className="min-w-[180px]"
+            onChange={(e) => setFilterDepartment(e.target.value)}
+            options={[
+              { value: 'all', label: 'All Departments' },
+              ...departments.map(d => ({ value: d, label: d.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) }))
+            ]}
+          />
+          <Select
+            value={filterStatus}
+            className="min-w-[150px]"
+            onChange={(e) => setFilterStatus(e.target.value)}
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'active', label: 'Active' },
+              { value: 'on-duty', label: 'On Duty' },
+              { value: 'off-duty', label: 'Off Duty' },
+              { value: 'on-leave', label: 'On Leave' }
+            ]}
+          />
+        </div>
+      </div>
 
       {/* Staff Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -240,15 +240,15 @@ export default function AdminStaff() {
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-border">
+              <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(201,168,76,0.1)' }}>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div>
-                    <span className="text-muted-foreground">Email:</span>
-                    <p className="truncate">{member.email}</p>
+                    <span style={{ color: 'rgba(248,244,239,0.5)' }}>Email:</span>
+                    <p className="truncate" style={{ color: '#F8F4EF' }}>{member.email}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Shift:</span>
-                    <p className="capitalize">{member.shift || 'Morning'}</p>
+                    <span style={{ color: 'rgba(248,244,239,0.5)' }}>Shift:</span>
+                    <p className="capitalize" style={{ color: '#F8F4EF' }}>{member.shift || 'Morning'}</p>
                   </div>
                 </div>
               </div>

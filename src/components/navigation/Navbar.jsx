@@ -83,18 +83,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 group-hover:scale-105"
-              style={{ background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.4)' }}
-            >
-              <span className="font-display font-light text-lg" style={{ color: '#C9A84C' }}>GH</span>
-            </div>
-            <div className="hidden sm:block">
-              <span className="font-display font-light text-xl" style={{ color: '#F8F4EF', letterSpacing: '0.04em' }}>
-                Grand Horizon
-              </span>
-            </div>
+          <Link to="/" className="flex items-center group">
+            <img
+              src="/logo.png"
+              alt="LuxuryStay Hospitality"
+              className="h-20 w-auto transition-all duration-200 group-hover:scale-105"
+              style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.3))' }}
+            />
           </Link>
 
           {/* Desktop Navigation */}

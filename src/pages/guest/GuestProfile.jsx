@@ -18,6 +18,19 @@ export default function GuestProfile() {
     phone: user?.phone || '',
   })
 
+  // Resync formData whenever user changes (after login, register, or profile update)
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: user.firstName || prev.firstName,
+        lastName: user.lastName || prev.lastName,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+      }))
+    }
+  }, [user])
+
   // Password form
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' })
   const [showPw, setShowPw] = useState({})

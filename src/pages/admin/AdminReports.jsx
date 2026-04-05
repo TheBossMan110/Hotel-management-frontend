@@ -14,7 +14,7 @@ import {
 } from 'recharts'
 
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-const COLORS = ['#D4A574','#1E3A5F','#6B7280','#10B981','#F59E0B','#EF4444']
+const COLORS = ['#C9A84C','#E8C97A','#A67C32','#10B981','#F59E0B','#EF4444']
 
 export default function AdminReports() {
   const { rooms } = useRoomsStore()
@@ -81,7 +81,6 @@ export default function AdminReports() {
 
       if (maintRes.status === 'fulfilled') {
         const mData = maintRes.value.data
-        // Backend returns { data: { requests, stats } } so we need mData.data?.requests
         setReportsList(mData.data?.requests || mData.requests || mData.data || [])
       }
     } catch (err) {
@@ -98,15 +97,29 @@ export default function AdminReports() {
   const yearOptions = [2022, 2023, 2024, 2025, 2026].map(y => ({ value: y.toString(), label: y.toString() }))
 
   const renderStars = (rating) => Array.from({ length: 5 }, (_, i) => (
-    <Star key={i} className={`w-4 h-4 inline ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+    <Star key={i} className={`w-4 h-4 inline ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-600'}`} />
   ))
 
-  const getPriorityColor = (p) => ({ low: 'bg-blue-100 text-blue-700', medium: 'bg-yellow-100 text-yellow-700', high: 'bg-orange-100 text-orange-700', critical: 'bg-red-100 text-red-700' }[p] || 'bg-gray-100 text-gray-700')
-  const getStatusColor = (s) => ({ open: 'bg-red-100 text-red-700', assigned: 'bg-blue-100 text-blue-700', 'in-progress': 'bg-yellow-100 text-yellow-700', resolved: 'bg-green-100 text-green-700', closed: 'bg-gray-100 text-gray-700' }[s] || 'bg-gray-100 text-gray-700')
+  const getPriorityColor = (p) => ({
+    low: { background: 'rgba(201,168,76,0.12)', color: '#C9A84C' },
+    medium: { background: 'rgba(251,191,36,0.12)', color: '#fbbf24' },
+    high: { background: 'rgba(251,146,60,0.12)', color: '#fb923c' },
+    critical: { background: 'rgba(239,68,68,0.12)', color: '#f87171' }
+  }[p] || { background: 'rgba(255,255,255,0.06)', color: 'rgba(248,244,239,0.5)' })
+
+  const getStatusColor = (s) => ({
+    open: { background: 'rgba(239,68,68,0.12)', color: '#f87171' },
+    assigned: { background: 'rgba(201,168,76,0.12)', color: '#C9A84C' },
+    'in-progress': { background: 'rgba(251,191,36,0.12)', color: '#fbbf24' },
+    resolved: { background: 'rgba(34,197,94,0.12)', color: '#4ade80' },
+    closed: { background: 'rgba(255,255,255,0.06)', color: 'rgba(248,244,239,0.4)' }
+  }[s] || { background: 'rgba(255,255,255,0.06)', color: 'rgba(248,244,239,0.4)' })
+
+  const chartTooltipStyle = { background: '#111111', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '8px', color: '#F8F4EF' }
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#C9A84C', borderTopColor: 'transparent' }} />
     </div>
   )
 
@@ -114,41 +127,28 @@ export default function AdminReports() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-serif font-bold text-gray-900">Analytics & Reports</h1>
-          <p className="text-gray-500">Comprehensive hotel performance insights</p>
+          <h1 className="text-2xl font-display font-light" style={{ color: '#F8F4EF' }}>Analytics &amp; Reports</h1>
+          <p className="text-sm mt-1" style={{ color: 'rgba(248,244,239,0.45)', fontFamily: 'DM Sans, sans-serif' }}>Comprehensive hotel performance insights</p>
         </div>
         <div className="flex gap-2">
           <Select value={year.toString()} onChange={(e) => setYear(Number(e.target.value))} options={yearOptions} />
-          <Button variant="outline" onClick={loadAnalytics}>Refresh</Button>
+          <Button variant="secondary" onClick={loadAnalytics}>Refresh</Button>
         </div>
       </div>
 
-      {error && <Card><CardContent className="py-4 text-center text-red-600">{error}</CardContent></Card>}
+      {error && <Card><CardContent className="py-4 text-center" style={{ color: '#f87171' }}>{error}</CardContent></Card>}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card><CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Total Revenue {year}</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
-              <p className="text-xs text-green-600">{totalBookings} bookings</p>
+              <p className="text-sm" style={{ color: 'rgba(248,244,239,0.45)' }}>Total Revenue {year}</p>
+              <p className="text-2xl font-bold mt-1" style={{ color: '#F8F4EF' }}>{formatCurrency(totalRevenue)}</p>
+              <p className="text-xs mt-1" style={{ color: '#4ade80' }}>{totalBookings} bookings</p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1" /></svg>
-            </div>
-          </div>
-        </CardContent></Card>
-
-        <Card><CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500">Avg. Booking Value</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(avgBookingValue)}</p>
-              <p className="text-xs text-gray-500">Avg stay: {avgStay} nights</p>
-            </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(34,197,94,0.12)' }}>
+              <svg className="w-6 h-6" style={{ color: '#4ade80' }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 9v1" /></svg>
             </div>
           </div>
         </CardContent></Card>
@@ -156,12 +156,12 @@ export default function AdminReports() {
         <Card><CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Feedback Received</p>
-              <p className="text-2xl font-bold text-gray-900">{feedbackList.length}</p>
-              <p className="text-xs text-gray-500">{reportsList.length} maintenance reports</p>
+              <p className="text-sm" style={{ color: 'rgba(248,244,239,0.45)' }}>Avg. Booking Value</p>
+              <p className="text-2xl font-bold mt-1" style={{ color: '#F8F4EF' }}>{formatCurrency(avgBookingValue)}</p>
+              <p className="text-xs mt-1" style={{ color: 'rgba(248,244,239,0.4)' }}>Avg stay: {avgStay} nights</p>
             </div>
-            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-              <MessageSquare className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.12)' }}>
+              <svg className="w-6 h-6" style={{ color: '#C9A84C' }} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             </div>
           </div>
         </CardContent></Card>
@@ -169,12 +169,25 @@ export default function AdminReports() {
         <Card><CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Guest Satisfaction</p>
-              <p className="text-2xl font-bold text-gray-900">{feedbackStats?.avgRating ? feedbackStats.avgRating.toFixed(1) : 'N/A'}/5.0</p>
-              <p className="text-xs text-gray-500">{feedbackStats?.totalReviews || feedbackList.length} reviews</p>
+              <p className="text-sm" style={{ color: 'rgba(248,244,239,0.45)' }}>Feedback Received</p>
+              <p className="text-2xl font-bold mt-1" style={{ color: '#F8F4EF' }}>{feedbackList.length}</p>
+              <p className="text-xs mt-1" style={{ color: 'rgba(248,244,239,0.4)' }}>{reportsList.length} maintenance reports</p>
             </div>
-            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-              <Star className="w-6 h-6 text-amber-600" />
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.12)' }}>
+              <MessageSquare className="w-6 h-6" style={{ color: '#a78bfa' }} />
+            </div>
+          </div>
+        </CardContent></Card>
+
+        <Card><CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm" style={{ color: 'rgba(248,244,239,0.45)' }}>Guest Satisfaction</p>
+              <p className="text-2xl font-bold mt-1" style={{ color: '#F8F4EF' }}>{feedbackStats?.avgRating ? feedbackStats.avgRating.toFixed(1) : 'N/A'}/5.0</p>
+              <p className="text-xs mt-1" style={{ color: 'rgba(248,244,239,0.4)' }}>{feedbackStats?.totalReviews || feedbackList.length} reviews</p>
+            </div>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.12)' }}>
+              <Star className="w-6 h-6" style={{ color: '#C9A84C' }} />
             </div>
           </div>
         </CardContent></Card>
@@ -182,41 +195,45 @@ export default function AdminReports() {
 
       <Tabs defaultValue="feedback">
         <TabsList>
-          <TabsTrigger value="feedback">Feedback & Reports</TabsTrigger>
+          <TabsTrigger value="feedback">Feedback &amp; Reports</TabsTrigger>
           <TabsTrigger value="revenue">Revenue</TabsTrigger>
           <TabsTrigger value="occupancy">Occupancy</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
         </TabsList>
 
-        {/* ═══════ FEEDBACK & REPORTS TAB ═══════ */}
+        {/* FEEDBACK & REPORTS TAB */}
         <TabsContent value="feedback">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Guest Feedback */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-blue-600" /> Guest Feedback
+              <h3 className="text-base font-medium mb-4 flex items-center gap-2" style={{ color: '#F8F4EF' }}>
+                <MessageSquare className="w-5 h-5" style={{ color: '#C9A84C' }} /> Guest Feedback
               </h3>
               {feedbackList.length === 0 ? (
-                <Card><CardContent className="py-8 text-center text-gray-500">No feedback received yet</CardContent></Card>
+                <Card><CardContent className="py-8 text-center" style={{ color: 'rgba(248,244,239,0.4)' }}>No feedback received yet</CardContent></Card>
               ) : (
                 <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto pr-2">
                   {feedbackList.map((fb, i) => (
-                    <div key={fb._id || i} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div key={fb._id || i} className="p-4 rounded-xl hover:border-amber-500/30 transition-all"
+                      style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.12)' }}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                            <User className="w-4 h-4 text-blue-600" />
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(201,168,76,0.12)' }}>
+                            <User className="w-4 h-4" style={{ color: '#C9A84C' }} />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-900">{fb.guest?.firstName || 'Guest'} {fb.guest?.lastName || ''}</p>
-                            <p className="text-xs text-gray-500">{fb.booking?.bookingNumber || ''} • {formatDate(fb.createdAt)}</p>
+                            <p className="text-sm font-medium" style={{ color: '#F8F4EF' }}>{fb.guest?.firstName || 'Guest'} {fb.guest?.lastName || ''}</p>
+                            <p className="text-xs" style={{ color: 'rgba(248,244,239,0.35)' }}>{fb.booking?.bookingNumber || ''} • {formatDate(fb.createdAt)}</p>
                           </div>
                         </div>
-                        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${fb.status === 'approved' ? 'bg-green-100 text-green-700' : fb.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>{fb.status}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full capitalize"
+                          style={fb.status === 'approved' ? { background: 'rgba(34,197,94,0.12)', color: '#4ade80' } : fb.status === 'pending' ? { background: 'rgba(251,191,36,0.12)', color: '#fbbf24' } : { background: 'rgba(255,255,255,0.06)', color: 'rgba(248,244,239,0.4)' }}>
+                          {fb.status}
+                        </span>
                       </div>
                       <div className="mb-2">{renderStars(fb.ratings?.overall || 0)}</div>
-                      <p className="text-sm text-gray-700 mb-2">{fb.comment}</p>
-                      <div className="flex flex-wrap gap-3 text-xs text-gray-400">
+                      <p className="text-sm mb-2" style={{ color: 'rgba(248,244,239,0.75)' }}>{fb.comment}</p>
+                      <div className="flex flex-wrap gap-3 text-xs" style={{ color: 'rgba(248,244,239,0.35)' }}>
                         {fb.ratings?.cleanliness > 0 && <span>Cleanliness: {fb.ratings.cleanliness}/5</span>}
                         {fb.ratings?.staff > 0 && <span>Staff: {fb.ratings.staff}/5</span>}
                         {fb.ratings?.comfort > 0 && <span>Comfort: {fb.ratings.comfort}/5</span>}
@@ -230,32 +247,33 @@ export default function AdminReports() {
 
             {/* Maintenance Reports */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-orange-600" /> Maintenance Reports
+              <h3 className="text-base font-medium mb-4 flex items-center gap-2" style={{ color: '#F8F4EF' }}>
+                <AlertTriangle className="w-5 h-5" style={{ color: '#fb923c' }} /> Maintenance Reports
               </h3>
               {reportsList.length === 0 ? (
-                <Card><CardContent className="py-8 text-center text-gray-500">No reports received yet</CardContent></Card>
+                <Card><CardContent className="py-8 text-center" style={{ color: 'rgba(248,244,239,0.4)' }}>No reports received yet</CardContent></Card>
               ) : (
                 <div className="flex flex-col gap-3 max-h-[600px] overflow-y-auto pr-2">
                   {reportsList.map((rpt, i) => (
-                    <div key={rpt._id || i} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div key={rpt._id || i} className="p-4 rounded-xl transition-all"
+                      style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.12)' }}>
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                            <AlertTriangle className="w-4 h-4 text-orange-600" />
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(251,146,60,0.12)' }}>
+                            <AlertTriangle className="w-4 h-4" style={{ color: '#fb923c' }} />
                           </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-900">{rpt.title}</p>
-                            <p className="text-xs text-gray-500">By: {rpt.reportedBy?.firstName || 'Guest'} {rpt.reportedBy?.lastName || ''} • {formatDate(rpt.createdAt)}</p>
+                            <p className="text-sm font-medium" style={{ color: '#F8F4EF' }}>{rpt.title}</p>
+                            <p className="text-xs" style={{ color: 'rgba(248,244,239,0.35)' }}>By: {rpt.reportedBy?.firstName || 'Guest'} {rpt.reportedBy?.lastName || ''} • {formatDate(rpt.createdAt)}</p>
                           </div>
                         </div>
                         <div className="flex gap-1">
-                          <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${getPriorityColor(rpt.priority)}`}>{rpt.priority}</span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${getStatusColor(rpt.status)}`}>{rpt.status}</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full capitalize" style={getPriorityColor(rpt.priority)}>{rpt.priority}</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full capitalize" style={getStatusColor(rpt.status)}>{rpt.status}</span>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-700 mb-2">{rpt.description}</p>
-                      <div className="flex flex-wrap gap-3 text-xs text-gray-400">
+                      <p className="text-sm mb-2" style={{ color: 'rgba(248,244,239,0.7)' }}>{rpt.description}</p>
+                      <div className="flex flex-wrap gap-3 text-xs" style={{ color: 'rgba(248,244,239,0.35)' }}>
                         <span>🏷️ {rpt.category}</span>
                         <span>🏨 Room: {rpt.room?.roomNumber || 'N/A'}</span>
                         {rpt.assignedTo && <span>👷 {rpt.assignedTo.firstName || 'Staff'}</span>}
@@ -272,24 +290,24 @@ export default function AdminReports() {
         <TabsContent value="revenue">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <Card className="lg:col-span-2">
-              <CardHeader><CardTitle className="text-gray-900">Monthly Revenue — {year}</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Monthly Revenue — {year}</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={revenueData}>
-                      <defs><linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#D4A574" stopOpacity={0.3} /><stop offset="95%" stopColor="#D4A574" stopOpacity={0} /></linearGradient></defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                      <XAxis dataKey="month" stroke="#6B7280" fontSize={12} />
-                      <YAxis stroke="#6B7280" fontSize={12} tickFormatter={(v) => `${v/1000}k`} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#111' }} formatter={(value) => [formatCurrency(value), 'Revenue']} />
-                      <Area type="monotone" dataKey="revenue" stroke="#D4A574" strokeWidth={2} fill="url(#colorRev)" />
+                      <defs><linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#C9A84C" stopOpacity={0.3} /><stop offset="95%" stopColor="#C9A84C" stopOpacity={0} /></linearGradient></defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <XAxis dataKey="month" stroke="rgba(248,244,239,0.3)" fontSize={12} />
+                      <YAxis stroke="rgba(248,244,239,0.3)" fontSize={12} tickFormatter={(v) => `${v/1000}k`} />
+                      <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => [formatCurrency(value), 'Revenue']} />
+                      <Area type="monotone" dataKey="revenue" stroke="#C9A84C" strokeWidth={2} fill="url(#colorRev)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-gray-900">Revenue by Category</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Revenue by Category</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-80">
                   {byCategory.length > 0 ? (
@@ -298,11 +316,11 @@ export default function AdminReports() {
                         <Pie data={byCategory} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
                           {byCategory.map((entry, index) => <Cell key={index} fill={entry.color} />)}
                         </Pie>
-                        <Tooltip formatter={(value) => formatCurrency(value)} />
+                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => formatCurrency(value)} />
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-full"><p className="text-gray-500 text-sm">No data</p></div>
+                    <div className="flex items-center justify-center h-full"><p style={{ color: 'rgba(248,244,239,0.4)' }} className="text-sm">No data</p></div>
                   )}
                 </div>
               </CardContent>
@@ -314,38 +332,38 @@ export default function AdminReports() {
         <TabsContent value="occupancy">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
-              <CardHeader><CardTitle className="text-gray-900">Daily Bookings Trend</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Daily Bookings Trend</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={occupancyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                      <XAxis dataKey="date" stroke="#6B7280" fontSize={10} tickFormatter={v => v?.slice(5) || ''} />
-                      <YAxis stroke="#6B7280" fontSize={12} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#111' }} />
-                      <Line type="monotone" dataKey="bookings" stroke="#1E3A5F" strokeWidth={3} dot={false} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <XAxis dataKey="date" stroke="rgba(248,244,239,0.3)" fontSize={10} tickFormatter={v => v?.slice(5) || ''} />
+                      <YAxis stroke="rgba(248,244,239,0.3)" fontSize={12} />
+                      <Tooltip contentStyle={chartTooltipStyle} />
+                      <Line type="monotone" dataKey="bookings" stroke="#C9A84C" strokeWidth={3} dot={false} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-gray-900">Room Status</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Room Status</CardTitle></CardHeader>
               <CardContent>
                 <div className="flex flex-col gap-4 pt-4">
                   {[
-                    { label: 'Available', count: rooms.filter(r => r.status === 'available').length, color: 'bg-green-500' },
-                    { label: 'Occupied', count: rooms.filter(r => r.status === 'occupied').length, color: 'bg-blue-500' },
-                    { label: 'Maintenance', count: rooms.filter(r => r.status === 'maintenance').length, color: 'bg-amber-500' },
-                    { label: 'Reserved', count: rooms.filter(r => r.status === 'reserved').length, color: 'bg-purple-500' }
+                    { label: 'Available', count: rooms.filter(r => r.status === 'available').length, color: '#4ade80', bg: 'rgba(34,197,94,0.4)' },
+                    { label: 'Occupied', count: rooms.filter(r => r.status === 'occupied').length, color: '#C9A84C', bg: 'rgba(201,168,76,0.4)' },
+                    { label: 'Maintenance', count: rooms.filter(r => r.status === 'maintenance').length, color: '#fbbf24', bg: 'rgba(251,191,36,0.4)' },
+                    { label: 'Reserved', count: rooms.filter(r => r.status === 'reserved').length, color: '#a78bfa', bg: 'rgba(139,92,246,0.4)' }
                   ].map((st) => (
                     <div key={st.label}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm text-gray-700">{st.label}</span>
-                        <span className="font-medium text-gray-900">{st.count}</span>
+                        <span className="text-sm" style={{ color: 'rgba(248,244,239,0.7)' }}>{st.label}</span>
+                        <span className="font-medium" style={{ color: '#F8F4EF' }}>{st.count}</span>
                       </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
-                        <div className={`h-2 rounded-full ${st.color}`} style={{ width: `${rooms.length > 0 ? (st.count / rooms.length) * 100 : 0}%` }} />
+                      <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                        <div className="h-2 rounded-full transition-all" style={{ width: `${rooms.length > 0 ? (st.count / rooms.length) * 100 : 0}%`, background: st.color }} />
                       </div>
                     </div>
                   ))}
@@ -359,23 +377,23 @@ export default function AdminReports() {
         <TabsContent value="bookings">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Card>
-              <CardHeader><CardTitle className="text-gray-900">Monthly Booking Count</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Monthly Booking Count</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={revenueData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                      <XAxis dataKey="month" stroke="#6B7280" fontSize={12} />
-                      <YAxis stroke="#6B7280" fontSize={12} />
-                      <Tooltip contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px', color: '#111' }} />
-                      <Bar dataKey="bookings" fill="#1E3A5F" radius={[4, 4, 0, 0]} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                      <XAxis dataKey="month" stroke="rgba(248,244,239,0.3)" fontSize={12} />
+                      <YAxis stroke="rgba(248,244,239,0.3)" fontSize={12} />
+                      <Tooltip contentStyle={chartTooltipStyle} />
+                      <Bar dataKey="bookings" fill="#C9A84C" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-gray-900">Booking Sources</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Booking Sources</CardTitle></CardHeader>
               <CardContent>
                 <div className="h-80">
                   {sourcesData.length > 0 ? (
@@ -384,12 +402,12 @@ export default function AdminReports() {
                         <Pie data={sourcesData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} dataKey="value">
                           {sourcesData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
                         </Pie>
-                        <Tooltip formatter={(value) => `${value} bookings`} />
+                        <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => `${value} bookings`} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
-                    <div className="flex items-center justify-center h-full"><p className="text-gray-500 text-sm">No data</p></div>
+                    <div className="flex items-center justify-center h-full"><p style={{ color: 'rgba(248,244,239,0.4)' }} className="text-sm">No data</p></div>
                   )}
                 </div>
               </CardContent>

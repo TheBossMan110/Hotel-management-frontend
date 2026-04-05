@@ -93,12 +93,12 @@ export default function AdminServiceRequests() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Bell className="w-5 h-5 text-blue-600" />
+              <div className="p-2 rounded-lg" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                <Bell className="w-5 h-5" style={{ color: '#C9A84C' }} />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Requests</p>
-                <p className="text-xl font-bold">{stats.total}</p>
+                <p className="text-xl font-bold" style={{ color: '#F8F4EF' }}>{stats.total}</p>
               </div>
             </div>
           </CardContent>
@@ -107,12 +107,12 @@ export default function AdminServiceRequests() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-50 rounded-lg">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
+              <div className="p-2 rounded-lg" style={{ background: 'rgba(251,191,36,0.1)' }}>
+                <AlertCircle className="w-5 h-5 text-amber-500" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Pending</p>
-                <p className="text-xl font-bold text-amber-600">{stats.pending}</p>
+                <p className="text-xl font-bold text-amber-500">{stats.pending}</p>
               </div>
             </div>
           </CardContent>
@@ -121,12 +121,12 @@ export default function AdminServiceRequests() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Clock className="w-5 h-5 text-blue-600" />
+              <div className="p-2 rounded-lg" style={{ background: 'rgba(201,168,76,0.1)' }}>
+                <Clock className="w-5 h-5" style={{ color: '#C9A84C' }} />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">In Progress</p>
-                <p className="text-xl font-bold text-blue-600">{stats.inProgress}</p>
+                <p className="text-xl font-bold" style={{ color: '#C9A84C' }}>{stats.inProgress}</p>
               </div>
             </div>
           </CardContent>
@@ -135,12 +135,12 @@ export default function AdminServiceRequests() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-600" />
+              <div className="p-2 rounded-lg" style={{ background: 'rgba(34,197,94,0.1)' }}>
+                <CheckCircle className="w-5 h-5 text-green-500" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-xl font-bold text-green-600">{stats.completed}</p>
+                <p className="text-xl font-bold text-green-500">{stats.completed}</p>
               </div>
             </div>
           </CardContent>
@@ -148,47 +148,46 @@ export default function AdminServiceRequests() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search by guest name, room number, or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full h-10 pl-10 pr-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-40"
-              options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'acknowledged', label: 'Acknowledged' },
-                { value: 'in-progress', label: 'In Progress' },
-                { value: 'completed', label: 'Completed' }
-              ]}
-            />
-            <Select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-44"
-              options={[
-                { value: 'all', label: 'All Types' },
-                { value: 'room-service', label: 'Room Service' },
-                { value: 'housekeeping', label: 'Housekeeping' },
-                { value: 'transportation', label: 'Transportation' },
-                { value: 'laundry', label: 'Laundry' },
-                { value: 'guest-request', label: 'Special Request' }
-              ]}
+      <div className="p-4 rounded-xl" style={{ background: '#111111', border: '1px solid rgba(201,168,76,0.15)' }}>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search by guest name, room number, or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-10 pl-10 pr-4 rounded-md border text-sm focus:outline-none transition-colors"
+              style={{ background: '#1A1A1A', border: '1px solid rgba(201,168,76,0.2)', color: '#F8F4EF' }}
             />
           </div>
-        </CardContent>
-      </Card>
+          <Select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="min-w-[160px]"
+            options={[
+              { value: 'all', label: 'All Status' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'acknowledged', label: 'Acknowledged' },
+              { value: 'in-progress', label: 'In Progress' },
+              { value: 'completed', label: 'Completed' }
+            ]}
+          />
+          <Select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="min-w-[180px]"
+            options={[
+              { value: 'all', label: 'All Types' },
+              { value: 'room-service', label: 'Room Service' },
+              { value: 'housekeeping', label: 'Housekeeping' },
+              { value: 'transportation', label: 'Transportation' },
+              { value: 'laundry', label: 'Laundry' },
+              { value: 'guest-request', label: 'Special Request' }
+            ]}
+          />
+        </div>
+      </div>
 
       {/* Requests List */}
       <Card>

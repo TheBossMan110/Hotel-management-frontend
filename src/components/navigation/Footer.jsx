@@ -10,11 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center"
-                style={{ background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.35)' }}>
-                <span className="font-display font-light text-lg" style={{ color: '#C9A84C' }}>GH</span>
-              </div>
-              <span className="font-display font-light text-xl" style={{ color: '#F8F4EF', letterSpacing: '0.04em' }}>Grand Horizon</span>
+              <img src="/logo.png" alt="LuxuryStay Hospitality" className="h-30 w-auto" style={{ filter: 'drop-shadow(0 0 6px rgba(201,168,76,0.25))' }} />
             </Link>
             <p className="text-sm font-body leading-relaxed" style={{ color: 'rgba(248,244,239,0.45)' }}>
               Experience luxury redefined at Grand Horizon Hotel. Where every stay becomes an unforgettable memory.
