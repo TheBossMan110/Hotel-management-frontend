@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#9CA3AF" fontSize={12} />
-                  <YAxis stroke="#9CA3AF" fontSize={12} tickFormatter={(v) => `$${v/1000}k`} />
+                  <YAxis stroke="#9CA3AF" fontSize={12} tickFormatter={(v) => `Rs ${v/1000}k`} />
                   <Tooltip
                     contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: '8px' }}
                     formatter={(value) => [formatCurrency(value), 'Revenue']}

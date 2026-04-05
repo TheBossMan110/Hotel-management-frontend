@@ -298,7 +298,7 @@ export default function AdminReports() {
                       <defs><linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#C9A84C" stopOpacity={0.3} /><stop offset="95%" stopColor="#C9A84C" stopOpacity={0} /></linearGradient></defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                       <XAxis dataKey="month" stroke="rgba(248,244,239,0.3)" fontSize={12} />
-                      <YAxis stroke="rgba(248,244,239,0.3)" fontSize={12} tickFormatter={(v) => `${v/1000}k`} />
+                      <YAxis stroke="rgba(248,244,239,0.3)" fontSize={12} tickFormatter={(v) => `Rs ${v/1000}k`} />
                       <Tooltip contentStyle={chartTooltipStyle} formatter={(value) => [formatCurrency(value), 'Revenue']} />
                       <Area type="monotone" dataKey="revenue" stroke="#C9A84C" strokeWidth={2} fill="url(#colorRev)" />
                     </AreaChart>

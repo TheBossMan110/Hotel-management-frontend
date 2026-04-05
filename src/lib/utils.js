@@ -5,11 +5,9 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount, currency = 'USD') {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency
-  }).format(amount)
+export function formatCurrency(amount, currency = 'PKR') {
+  const num = Number(amount) || 0
+  return 'Rs ' + num.toLocaleString('en-PK', { maximumFractionDigits: 0 })
 }
 
 export function formatDate(date, options = {}) {

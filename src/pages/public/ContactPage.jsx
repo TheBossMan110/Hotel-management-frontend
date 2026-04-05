@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
+import { emailAPI } from '../../lib/api'
+
+const ADMIN_EMAIL = 'syedzakihaider2006@gmail.com' // change to real admin email
 
 const contactInfo = [
   { icon: MapPin, title: 'Address', content: '123 Ocean Boulevard\nMiami Beach, FL 33139' },
@@ -32,9 +35,65 @@ export default function ContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    await new Promise(r => setTimeout(r, 1500))
-    setIsSubmitting(false)
-    setSubmitted(true)
+
+    // Build admin-readable HTML email body
+    const inquiryLabel = inquiryTypes.find(t => t.value === form.type)?.label || form.type || 'General Inquiry'
+    const subject = `${inquiryLabel} — ${form.name}`
+
+    const htmlMessage = `
+      <p style="color:rgba(201,168,76,0.8);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin:0 0 20px;">New Contact Form Submission</p>
+
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+        <tr>
+          <td style="padding:10px 16px;background:rgba(201,168,76,0.05);border-left:3px solid #C9A84C;border-radius:0 6px 0 0;">
+            <p style="margin:0;font-size:11px;color:rgba(248,244,239,0.45);text-transform:uppercase;letter-spacing:2px;">Inquiry Type</p>
+            <p style="margin:4px 0 0;font-size:15px;color:#C9A84C;font-weight:600;">${inquiryLabel}</p>
+          </td>
+        </tr>
+        <tr><td style="height:8px;"></td></tr>
+        <tr>
+          <td style="padding:10px 16px;background:rgba(201,168,76,0.03);border-left:3px solid rgba(201,168,76,0.3);">
+            <p style="margin:0;font-size:11px;color:rgba(248,244,239,0.45);text-transform:uppercase;letter-spacing:2px;">Guest Name</p>
+            <p style="margin:4px 0 0;font-size:16px;color:#F8F4EF;font-weight:500;">${form.name}</p>
+          </td>
+        </tr>
+        <tr><td style="height:8px;"></td></tr>
+        <tr>
+          <td style="padding:10px 16px;background:rgba(201,168,76,0.03);border-left:3px solid rgba(201,168,76,0.3);">
+            <p style="margin:0;font-size:11px;color:rgba(248,244,239,0.45);text-transform:uppercase;letter-spacing:2px;">Email Address</p>
+            <p style="margin:4px 0 0;"><a href="mailto:${form.email}" style="font-size:15px;color:#C9A84C;text-decoration:none;">${form.email}</a></p>
+          </td>
+        </tr>
+        <tr><td style="height:8px;"></td></tr>
+        <tr>
+          <td style="padding:10px 16px;background:rgba(201,168,76,0.03);border-left:3px solid rgba(201,168,76,0.3);">
+            <p style="margin:0;font-size:11px;color:rgba(248,244,239,0.45);text-transform:uppercase;letter-spacing:2px;">Phone Number</p>
+            <p style="margin:4px 0 0;"><a href="tel:${form.phone || ''}" style="font-size:15px;color:#F8F4EF;text-decoration:none;">${form.phone || 'Not provided'}</a></p>
+          </td>
+        </tr>
+      </table>
+
+      <p style="margin:0 0 12px;font-size:11px;color:rgba(248,244,239,0.45);text-transform:uppercase;letter-spacing:2px;">Message</p>
+      <div style="background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:20px;margin-bottom:24px;">
+        <p style="margin:0;font-size:15px;color:#F8F4EF;line-height:1.8;white-space:pre-wrap;">${form.message}</p>
+      </div>
+
+      <p style="margin:0;font-size:12px;color:rgba(248,244,239,0.3);">
+        📅 Received: ${new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' })} PKT
+        &nbsp;·&nbsp;
+        Reply directly to: <a href="mailto:${form.email}" style="color:#C9A84C;text-decoration:none;">${form.email}</a>
+      </p>
+    `
+
+    try {
+      await emailAPI.send({ to: ADMIN_EMAIL, subject, message: htmlMessage })
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Contact form email failed:', err)
+      setSubmitted(true)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
