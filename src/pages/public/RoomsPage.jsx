@@ -10,7 +10,7 @@ import Button from '../../components/ui/Button'
 import { Card, CardContent } from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import { cn } from '../../lib/utils'
-import { roomTypes, amenities as allAmenities, mockRooms, pakistanCities } from '../../data/mockData'
+import { roomTypes, amenities as allAmenities, pakistanCities } from '../../data/mockData'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
@@ -206,8 +206,8 @@ export default function RoomsPage() {
   const searchParams = new URLSearchParams(location.search)
   const reqGuests = Number(searchParams.get('guests')) || 0
 
-  const [rooms, setRooms]             = useState(mockRooms)  // start with mock so counts show immediately
-  const [loading, setLoading]         = useState(false)  // mockRooms loaded immediately
+  const [rooms, setRooms]             = useState([])  // start empty — only real API data
+  const [loading, setLoading]         = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [showFilters, setShowFilters] = useState(false)
   const [viewMode, setViewMode]       = useState('grid')
@@ -224,17 +224,20 @@ export default function RoomsPage() {
     setSearchQuery('')
   }
 
-  // Try to upgrade from mock → real API data silently in background
+  // Fetch rooms from real API
   useEffect(() => {
     const ctrl = new AbortController()
+    setLoading(true)
     fetch(`${API_URL}/rooms?limit=1000`, { signal: ctrl.signal })
       .then(r => { if (!r.ok) throw new Error(); return r.json() })
       .then(d => {
         const apiRooms = d.rooms || []
-        if (apiRooms.length > 0) setRooms(apiRooms)  // upgrade to live data only if API has rooms
-        // else keep mockRooms that's already shown
+        setRooms(apiRooms)
+        setLoading(false)
       })
-      .catch(() => {}) // silently keep mockRooms on any error
+      .catch((err) => {
+        if (err.name !== 'AbortError') setLoading(false)
+      })
     return () => ctrl.abort()
   }, [])
 

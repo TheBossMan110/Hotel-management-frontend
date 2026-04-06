@@ -12,7 +12,7 @@ import Badge from '../../components/ui/Badge'
 import useBookingsStore from '../../stores/bookingsStore'
 import useAuthStore from '../../stores/authStore'
 import { calculateNights } from '../../lib/utils'
-import { mockRooms, getRoomById } from '../../data/mockData'
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
@@ -132,7 +132,7 @@ export default function RoomDetailPage() {
   const [checkOut, setCheckOut] = useState('')
   const [guests, setGuests]     = useState(1)
 
-  const [allRooms, setAllRooms] = useState(mockRooms)
+  const [allRooms, setAllRooms] = useState([])
   const [recommendedRooms, setRecommendedRooms] = useState([])
 
   // Load all rooms to pick recommendations
@@ -161,16 +161,20 @@ export default function RoomDetailPage() {
     return () => clearInterval(intv)
   }, [allRooms, room])
 
-  // API → mock fallback
+  // Fetch room from API only
   useEffect(() => {
     setLoading(true)
+    // Validate ID format before sending to API
+    if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+      setRoom(null)
+      setLoading(false)
+      return
+    }
     fetch(`${API_URL}/rooms/${id}`)
       .then(r => { if (!r.ok) throw new Error(); return r.json() })
       .then(d => { setRoom(d.room); setLoading(false) })
       .catch(() => {
-        // Try mock data — id may be like "pk_h002_dlx"
-        const found = getRoomById(id) || mockRooms.find(r => r.id === id || r._id === id)
-        setRoom(found || null)
+        setRoom(null)
         setLoading(false)
       })
   }, [id])
