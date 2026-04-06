@@ -1,10 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Check, X } from 'lucide-react'
 // Uses the EXISTING auth store — do NOT rebuild authentication logic
 import useAuthStore from '../../stores/authStore'
 
 const HOTEL_IMAGE = 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=80'
+
+// ── Password strength rules ──
+const PASSWORD_RULES = [
+  { key: 'length', label: 'At least 8 characters', test: (pw) => pw.length >= 8 },
+  { key: 'upper', label: 'At least 1 uppercase letter (A-Z)', test: (pw) => /[A-Z]/.test(pw) },
+  { key: 'lower', label: 'At least 1 lowercase letter (a-z)', test: (pw) => /[a-z]/.test(pw) },
+  { key: 'number', label: 'At least 1 number (0-9)', test: (pw) => /[0-9]/.test(pw) },
+  { key: 'special', label: 'At least 1 special character (!@#$%^&*)', test: (pw) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw) },
+]
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -17,13 +26,22 @@ export default function RegisterPage() {
   const [showPass, setShowPass] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [validationError, setValidationError] = useState('')
+  const [passwordTouched, setPasswordTouched] = useState(false)
   const returnUrl = searchParams.get('returnUrl')
 
+  // BUG 3 FIX: Redirect to home page (/) after registration, not /guest or /profile
   useEffect(() => {
-    if (isAuthenticated && user) navigate(returnUrl ? decodeURIComponent(returnUrl) : '/guest')
+    if (isAuthenticated && user) navigate(returnUrl ? decodeURIComponent(returnUrl) : '/')
   }, [isAuthenticated, user])
 
   useEffect(() => { clearError() }, [clearError])
+
+  // Compute password rule results
+  const passwordResults = PASSWORD_RULES.map(rule => ({
+    ...rule,
+    passed: rule.test(form.password)
+  }))
+  const allPasswordRulesPassed = passwordResults.every(r => r.passed)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -31,8 +49,10 @@ export default function RegisterPage() {
     if (!form.email.includes('@') || !form.email.includes('.')) {
       setValidationError('Please enter a valid email address (e.g. name@example.com)'); return
     }
-    if (form.password.length < 8) {
-      setValidationError('Password must be at least 8 characters long for your security'); return
+    // BUG 1 FIX: Block submission if any password rule fails
+    if (!allPasswordRulesPassed) {
+      setPasswordTouched(true)
+      setValidationError('Please fix the password requirements listed below'); return
     }
     if (form.password !== form.confirmPassword) {
       setValidationError('Passwords do not match. Please re-enter your password carefully'); return
@@ -44,8 +64,27 @@ export default function RegisterPage() {
       firstName: form.firstName, lastName: form.lastName,
       email: form.email, phone: form.phone, password: form.password,
     })
-    if (result.success) navigate(returnUrl ? decodeURIComponent(returnUrl) : '/guest')
+    // BUG 3 FIX: Redirect to home page after successful registration
+    if (result.success) navigate(returnUrl ? decodeURIComponent(returnUrl) : '/')
   }
+
+  // BUG 2 FIX: Show specific error message for duplicate email
+  const getDisplayError = () => {
+    if (validationError) return validationError
+    if (!error) return null
+    // Check for duplicate email error from backend
+    const e = error.toLowerCase()
+    if (e.includes('email already') || e.includes('already exists') || e.includes('already registered')) {
+      return null // Will show special duplicate email UI below
+    }
+    return error
+  }
+
+  const isDuplicateEmailError = error && (
+    error.toLowerCase().includes('email already') ||
+    error.toLowerCase().includes('already exists') ||
+    error.toLowerCase().includes('already registered')
+  )
 
   return (
     <div className="min-h-screen flex" style={{ background: '#0A0A0A' }}>
@@ -87,9 +126,21 @@ export default function RegisterPage() {
             {returnUrl ? 'Create an account to complete your booking' : 'Join Grand Azure for exclusive benefits'}
           </p>
 
-          {(error || validationError) && (
+          {/* General errors */}
+          {getDisplayError() && (
             <div className="mb-4 p-3 rounded-xl text-sm font-body" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#f87171' }}>
-              {error || validationError}
+              {getDisplayError()}
+            </div>
+          )}
+
+          {/* BUG 2 FIX: Specific duplicate email error with link to login */}
+          {isDuplicateEmailError && (
+            <div className="mb-4 p-3 rounded-xl text-sm font-body" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#f87171' }}>
+              <p className="mb-1">An account with this email already exists.</p>
+              <Link to={returnUrl ? `/login?returnUrl=${returnUrl}` : '/login'}
+                className="font-medium underline hover:opacity-80 transition-opacity" style={{ color: '#C9A84C' }}>
+                Please log in instead →
+              </Link>
             </div>
           )}
 
@@ -122,26 +173,61 @@ export default function RegisterPage() {
                 className="luxury-input w-full h-11 px-4 text-sm font-body" />
             </div>
 
-            {[
-              { label: 'Password', key: 'password', show: showPass, toggle: () => setShowPass(!showPass), placeholder: 'Min 8 characters', autoComplete: 'new-password' },
-              { label: 'Confirm Password', key: 'confirmPassword', show: showConfirm, toggle: () => setShowConfirm(!showConfirm), placeholder: 'Confirm your password', autoComplete: 'new-password' },
-            ].map(({ label, key, show, toggle, placeholder, autoComplete }) => (
-              <div key={key}>
-                <label className="block text-xs font-body tracking-widest uppercase mb-2" style={{ color: '#C9A84C' }}>{label}</label>
-                <div className="relative">
-                  <input type={show ? 'text' : 'password'} required autoComplete={autoComplete} placeholder={placeholder}
-                    value={form[key]} onChange={e => setForm({ ...form, [key]: e.target.value })}
-                    className="luxury-input w-full h-11 px-4 pr-12 text-sm font-body" />
-                  <button type="button" onClick={toggle}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded transition-all"
-                    style={{ color: '#C9A84C' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#E8C97A' }}
-                    onMouseLeave={e => { e.currentTarget.style.color = '#C9A84C' }}>
-                    {show ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
+            {/* Password field with inline validation */}
+            <div>
+              <label className="block text-xs font-body tracking-widest uppercase mb-2" style={{ color: '#C9A84C' }}>Password</label>
+              <div className="relative">
+                <input type={showPass ? 'text' : 'password'} required autoComplete="new-password" placeholder="Strong password"
+                  value={form.password}
+                  onChange={e => { setForm({ ...form, password: e.target.value }); setPasswordTouched(true) }}
+                  onBlur={() => setPasswordTouched(true)}
+                  className="luxury-input w-full h-11 px-4 pr-12 text-sm font-body" />
+                <button type="button" onClick={() => setShowPass(!showPass)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded transition-all"
+                  style={{ color: '#C9A84C' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#E8C97A' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#C9A84C' }}>
+                  {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
-            ))}
+
+              {/* BUG 1 FIX: Real-time password strength checklist — shows on input change AND blur */}
+              {(passwordTouched || form.password.length > 0) && (
+                <div className="mt-2 space-y-1">
+                  {passwordResults.map(rule => (
+                    <div key={rule.key} className="flex items-center gap-2">
+                      {rule.passed
+                        ? <Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#4ade80' }} />
+                        : <X className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#f87171' }} />
+                      }
+                      <span className="text-[11px] font-body" style={{ color: rule.passed ? '#4ade80' : '#f87171' }}>
+                        {rule.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-xs font-body tracking-widest uppercase mb-2" style={{ color: '#C9A84C' }}>Confirm Password</label>
+              <div className="relative">
+                <input type={showConfirm ? 'text' : 'password'} required autoComplete="new-password" placeholder="Confirm your password"
+                  value={form.confirmPassword} onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
+                  className="luxury-input w-full h-11 px-4 pr-12 text-sm font-body" />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded transition-all"
+                  style={{ color: '#C9A84C' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#E8C97A' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#C9A84C' }}>
+                  {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {form.confirmPassword && form.password !== form.confirmPassword && (
+                <p className="text-[11px] mt-1 font-body" style={{ color: '#f87171' }}>Passwords do not match</p>
+              )}
+            </div>
 
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" required className="mt-0.5" style={{ accentColor: '#C9A84C' }} />

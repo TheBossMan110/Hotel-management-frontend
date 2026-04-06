@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Phone, MapPin, Key, CalendarDays, CreditCard, Star, Edit3, Save, X, Eye, EyeOff, LogOut, ChevronRight } from 'lucide-react'
 import useAuthStore from '../../stores/authStore'
+import { useBookingsStore } from '../../stores/bookingsStore'
 
 export default function GuestProfile() {
   const { user, updateProfile, updatePassword, logout } = useAuthStore()
+  const { myBookings, fetchMyBookings, isLoading: bookingsLoading } = useBookingsStore()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('overview')
   const [isEditing, setIsEditing] = useState(false)
@@ -31,19 +33,15 @@ export default function GuestProfile() {
     }
   }, [user])
 
+  // BUG 4 FIX: Fetch REAL bookings from the database API, NOT localStorage
+  useEffect(() => {
+    fetchMyBookings()
+  }, [fetchMyBookings])
+
   // Password form
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' })
   const [showPw, setShowPw] = useState({})
   const [pwSaving, setPwSaving] = useState(false)
-
-  // Get bookings from localStorage
-  const [bookings, setBookings] = useState([])
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem('guest-bookings') || '[]')
-      setBookings(stored)
-    } catch { setBookings([]) }
-  }, [])
 
   const showToast = (type, msg) => {
     setToast({ type, msg })
@@ -96,7 +94,12 @@ export default function GuestProfile() {
     { id: 'security', label: 'Security' },
   ]
 
-  const totalSpent = bookings.reduce((s, b) => s + (b.totalAmount || 0), 0)
+  // BUG 4 FIX: ALL stats come from the real database, NO hardcoded numbers
+  const bookings = myBookings || []
+  const totalSpent = bookings.reduce((s, b) => s + (b.pricing?.total || b.totalAmount || 0), 0)
+  // Loyalty points come from the real user object in the database
+  const loyaltyPoints = user?.loyaltyPoints || 0
+  const membershipTier = user?.membershipTier || 'bronze'
 
   return (
     <div className="min-h-screen" style={{ background: '#0A0A0A', color: '#F8F4EF' }}>
@@ -131,7 +134,7 @@ export default function GuestProfile() {
               <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
                 <span className="text-[10px] font-body uppercase tracking-widest px-3 py-1 rounded-full"
                   style={{ background: 'rgba(201,168,76,0.12)', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C' }}>
-                  Guest
+                  {membershipTier} Member
                 </span>
                 <span className="text-[10px] font-body uppercase tracking-widest px-3 py-1 rounded-full"
                   style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(248,244,239,0.5)' }}>
@@ -171,12 +174,12 @@ export default function GuestProfile() {
         {/* ── OVERVIEW TAB ── */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            {/* Stats Cards */}
+            {/* Stats Cards — ALL from real database */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
-                { label: 'Total Bookings', value: bookings.length, icon: CalendarDays },
-                { label: 'Total Spent', value: `PKR ${totalSpent.toLocaleString('en-PK')}`, icon: CreditCard },
-                { label: 'Loyalty Points', value: user?.loyaltyPoints || 0, icon: Star },
+                { label: 'Total Bookings', value: bookingsLoading ? '...' : bookings.length, icon: CalendarDays },
+                { label: 'Total Spent', value: bookingsLoading ? '...' : `PKR ${totalSpent.toLocaleString('en-US')}`, icon: CreditCard },
+                { label: 'Loyalty Points', value: loyaltyPoints, icon: Star },
               ].map(stat => (
                 <div key={stat.label} className="p-5 rounded-2xl transition-all"
                   style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
@@ -221,26 +224,38 @@ export default function GuestProfile() {
               </Link>
             </div>
 
-            {/* Recent Bookings */}
+            {/* Recent Bookings — from REAL API data */}
             <div className="rounded-2xl overflow-hidden" style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
               <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #1A1A1A' }}>
                 <h3 className="font-display text-lg" style={{ color: '#F8F4EF' }}>Recent Bookings</h3>
                 <Link to="/guest/bookings" className="text-xs font-body" style={{ color: '#C9A84C' }}>View All →</Link>
               </div>
-              {bookings.length > 0 ? (
+              {bookingsLoading ? (
+                <div className="px-5 py-12 text-center">
+                  <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-3" style={{ borderColor: '#C9A84C', borderTopColor: 'transparent' }} />
+                  <p className="text-sm font-body" style={{ color: 'rgba(248,244,239,0.4)' }}>Loading bookings...</p>
+                </div>
+              ) : bookings.length > 0 ? (
                 <div className="divide-y" style={{ borderColor: '#1A1A1A' }}>
                   {bookings.slice(0, 3).map((b, i) => (
-                    <div key={i} className="px-5 py-4 flex items-center justify-between">
+                    <div key={b._id || i} className="px-5 py-4 flex items-center justify-between">
                       <div>
-                        <p className="font-body text-sm font-medium" style={{ color: '#F8F4EF' }}>{b.roomName || 'Hotel Room'}</p>
+                        <p className="font-body text-sm font-medium" style={{ color: '#F8F4EF' }}>
+                          {b.room?.name || b.room?.type || 'Hotel Room'}
+                        </p>
                         <p className="text-xs font-body mt-0.5" style={{ color: 'rgba(248,244,239,0.4)' }}>
-                          {b.confirmationNumber || `GH-${i + 1}`} • {b.nights || 1} night{(b.nights || 1) > 1 ? 's' : ''}
+                          {b.bookingNumber || `#${(b._id || '').slice(-6).toUpperCase()}`} • {b.pricing?.nights || 1} night{(b.pricing?.nights || 1) > 1 ? 's' : ''}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-display text-sm" style={{ color: '#C9A84C' }}>PKR {(b.totalAmount || 0).toLocaleString('en-PK')}</p>
+                        <p className="font-display text-sm" style={{ color: '#C9A84C' }}>PKR {(b.pricing?.total || b.totalAmount || 0).toLocaleString('en-US')}</p>
                         <span className="text-[10px] font-body uppercase px-2 py-0.5 rounded-full"
-                          style={{ background: 'rgba(34,197,94,0.1)', color: '#4ade80' }}>Confirmed</span>
+                          style={{
+                            background: b.status === 'cancelled' ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+                            color: b.status === 'cancelled' ? '#f87171' : '#4ade80'
+                          }}>
+                          {(b.status || 'confirmed').replace(/-/g, ' ')}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -258,34 +273,46 @@ export default function GuestProfile() {
           </div>
         )}
 
-        {/* ── BOOKINGS TAB ── */}
+        {/* ── BOOKINGS TAB ── ALL from real API */}
         {activeTab === 'bookings' && (
           <div className="space-y-4">
             <h2 className="font-display text-xl" style={{ color: '#F8F4EF' }}>All Bookings</h2>
-            {bookings.length > 0 ? bookings.map((b, i) => (
-              <div key={i} className="p-5 rounded-2xl" style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
+            {bookingsLoading ? (
+              <div className="py-16 text-center rounded-2xl" style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
+                <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-3" style={{ borderColor: '#C9A84C', borderTopColor: 'transparent' }} />
+                <p className="text-sm font-body" style={{ color: 'rgba(248,244,239,0.4)' }}>Loading bookings...</p>
+              </div>
+            ) : bookings.length > 0 ? bookings.map((b, i) => (
+              <div key={b._id || i} className="p-5 rounded-2xl" style={{ background: '#111111', border: '1px solid #1A1A1A' }}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-mono text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(201,168,76,0.1)', color: '#C9A84C' }}>
-                        {b.confirmationNumber || `GH-${i + 1}`}
+                        {b.bookingNumber || `#${(b._id || '').slice(-6).toUpperCase()}`}
                       </span>
                       <span className="text-[10px] font-body uppercase px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(34,197,94,0.1)', color: '#4ade80' }}>Confirmed</span>
+                        style={{
+                          background: b.status === 'cancelled' ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)',
+                          color: b.status === 'cancelled' ? '#f87171' : '#4ade80'
+                        }}>
+                        {(b.status || 'confirmed').replace(/-/g, ' ')}
+                      </span>
                     </div>
-                    <h4 className="font-display text-lg" style={{ color: '#F8F4EF' }}>{b.roomName || 'Hotel Room'}</h4>
+                    <h4 className="font-display text-lg" style={{ color: '#F8F4EF' }}>
+                      {b.room?.name || b.room?.type || 'Hotel Room'}
+                    </h4>
                   </div>
                   <div className="text-right">
-                    <p className="font-display text-xl" style={{ color: '#C9A84C' }}>PKR {(b.totalAmount || 0).toLocaleString('en-PK')}</p>
-                    <p className="text-xs font-body" style={{ color: 'rgba(248,244,239,0.4)' }}>{b.nights || 1} night{(b.nights || 1) > 1 ? 's' : ''}</p>
+                    <p className="font-display text-xl" style={{ color: '#C9A84C' }}>PKR {(b.pricing?.total || b.totalAmount || 0).toLocaleString('en-US')}</p>
+                    <p className="text-xs font-body" style={{ color: 'rgba(248,244,239,0.4)' }}>{b.pricing?.nights || 1} night{(b.pricing?.nights || 1) > 1 ? 's' : ''}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4" style={{ borderTop: '1px solid #1A1A1A' }}>
                   {[
                     { l: 'Check-in', v: b.checkIn ? new Date(b.checkIn).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—' },
                     { l: 'Check-out', v: b.checkOut ? new Date(b.checkOut).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—' },
-                    { l: 'Guests', v: b.guests || 1 },
-                    { l: 'Booked', v: b.bookedAt ? new Date(b.bookedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : 'Today' },
+                    { l: 'Guests', v: `${b.guests?.adults || 1} Adults` },
+                    { l: 'Booked', v: b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—' },
                   ].map(d => (
                     <div key={d.l}>
                       <p className="text-[10px] font-body uppercase tracking-widest" style={{ color: 'rgba(248,244,239,0.3)' }}>{d.l}</p>

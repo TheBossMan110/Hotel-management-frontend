@@ -5,9 +5,9 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount, currency = 'PKR') {
+export function formatCurrency(amount) {
   const num = Number(amount) || 0
-  return 'Rs ' + num.toLocaleString('en-PK', { maximumFractionDigits: 0 })
+  return 'Rs ' + num.toLocaleString('en-US', { maximumFractionDigits: 0 })
 }
 
 export function formatDate(date, options = {}) {

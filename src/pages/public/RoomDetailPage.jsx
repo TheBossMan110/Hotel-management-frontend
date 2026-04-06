@@ -21,7 +21,7 @@ const AMENITY_ICONS = {
   Jacuzzi: Bath, 'King Bed': BedDouble, Spa: Sparkles,
 }
 
-const pkr = (n) => `PKR ${Number(n||0).toLocaleString('en-PK')}`
+const pkr = (n) => `PKR ${Number(n||0).toLocaleString('en-US')}`
 
 const getRoomCity = (r) => {
   if (r.city) return r.city;

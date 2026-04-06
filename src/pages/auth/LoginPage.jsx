@@ -24,7 +24,7 @@ export default function LoginPage() {
   const redirectAfterLogin = (role) => {
     if (returnUrl) { navigate(decodeURIComponent(returnUrl)); return }
     const routes = { admin: '/admin', staff: '/staff', guest: '/' }
-    navigate(routes[role] || '/guest')
+    navigate(routes[role] || '/')
   }
 
   const handleSubmit = async (e) => {

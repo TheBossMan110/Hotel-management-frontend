@@ -269,7 +269,7 @@ export default function LandingPage() {
                         className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full text-xs font-body font-semibold tracking-wide"
                         style={{ background: 'rgba(201,168,76,0.95)', color: '#0A0A0A' }}
                       >
-                        PKR {Number(room.price?.basePrice).toLocaleString('en-PK')} / night
+                        PKR {Number(room.price?.basePrice).toLocaleString('en-US')} / night
                       </div>
                       {/* hover overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-16">

@@ -270,7 +270,7 @@ export default function BookingPage() {
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="font-display text-lg" style={{ color: '#C9A84C' }}>PKR {Number(basePrice).toLocaleString('en-PK')}</div>
+                            <div className="font-display text-lg" style={{ color: '#C9A84C' }}>PKR {Number(basePrice).toLocaleString('en-US')}</div>
                             <div className="text-xs font-body" style={{ color: 'rgba(248,244,239,0.4)' }}>per night</div>
                           </div>
                         </div>
@@ -344,7 +344,7 @@ export default function BookingPage() {
                         placeholder="4242 4242 4242 4242"
                         value={payment.cardNumber}
                         inputMode="numeric"
-                        autoComplete="off"
+                        autoComplete="one-time-code"
                         onChange={e => setPayment({ ...payment, cardNumber: formatCardNumber(e.target.value) })}
                       />
                     </div>
@@ -359,7 +359,7 @@ export default function BookingPage() {
                         placeholder="MM/YY"
                         value={payment.expiry}
                         inputMode="numeric"
-                        autoComplete="off"
+                        autoComplete="one-time-code"
                         onChange={e => setPayment({ ...payment, expiry: formatExpiry(e.target.value) })}
                       />
                       {paymentErrors.expiry && <p className="text-xs mt-1 font-body" style={{ color: '#f87171' }}>⚠ {paymentErrors.expiry}</p>}
@@ -371,7 +371,7 @@ export default function BookingPage() {
                         placeholder="123"
                         maxLength={4}
                         inputMode="numeric"
-                        autoComplete="off"
+                        autoComplete="one-time-code"
                         value={payment.cvc}
                         onChange={e => setPayment({ ...payment, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) })}
                       />
@@ -385,7 +385,7 @@ export default function BookingPage() {
                       className="luxury-input w-full h-10 px-3 text-sm"
                       placeholder="John Doe"
                       value={payment.nameOnCard}
-                      autoComplete="off"
+                      autoComplete="one-time-code"
                       onChange={e => setPayment({ ...payment, nameOnCard: e.target.value })}
                     />
                     {paymentErrors.nameOnCard && <p className="text-xs mt-1 font-body" style={{ color: '#f87171' }}>⚠ {paymentErrors.nameOnCard}</p>}
@@ -430,7 +430,7 @@ export default function BookingPage() {
                       ))}
                       <div className="flex justify-between items-center font-display text-lg pt-3" style={{ borderTop: '1px solid rgba(201,168,76,0.2)', color: '#C9A84C' }}>
                         <span>Total Paid</span>
-                        <span>PKR {Number(confirmedBooking?.totalAmount || total).toLocaleString('en-PK')}</span>
+                        <span>PKR {Number(confirmedBooking?.totalAmount || total).toLocaleString('en-US')}</span>
                       </div>
                     </div>
                   </div>
@@ -504,20 +504,20 @@ export default function BookingPage() {
 
                       <div className="space-y-2 text-sm pt-4" style={{ borderTop: '1px solid #2A2A2A' }}>
                         <div className="flex justify-between">
-                          <span style={{ color: 'rgba(248,244,239,0.4)' }}>PKR {Number(basePrice).toLocaleString('en-PK')} x {nights} nights</span>
-                          <span className="font-body" style={{ color: '#F8F4EF' }}>PKR {Number(subtotal).toLocaleString('en-PK')}</span>
+                          <span style={{ color: 'rgba(248,244,239,0.4)' }}>PKR {Number(basePrice).toLocaleString('en-US')} x {nights} nights</span>
+                          <span className="font-body" style={{ color: '#F8F4EF' }}>PKR {Number(subtotal).toLocaleString('en-US')}</span>
                         </div>
                         <div className="flex justify-between">
                           <span style={{ color: 'rgba(248,244,239,0.4)' }}>Service fee</span>
-                          <span className="font-body" style={{ color: '#F8F4EF' }}>PKR {Number(serviceFee).toLocaleString('en-PK')}</span>
+                          <span className="font-body" style={{ color: '#F8F4EF' }}>PKR {Number(serviceFee).toLocaleString('en-US')}</span>
                         </div>
                         <div className="flex justify-between">
                           <span style={{ color: 'rgba(248,244,239,0.4)' }}>Taxes</span>
-                          <span className="font-body" style={{ color: '#F8F4EF' }}>PKR {Number(taxes).toLocaleString('en-PK')}</span>
+                          <span className="font-body" style={{ color: '#F8F4EF' }}>PKR {Number(taxes).toLocaleString('en-US')}</span>
                         </div>
                         <div className="flex justify-between font-display text-lg pt-3" style={{ borderTop: '1px solid rgba(201,168,76,0.2)', color: '#C9A84C' }}>
                           <span>Total</span>
-                          <span>PKR {Number(total).toLocaleString('en-PK')}</span>
+                          <span>PKR {Number(total).toLocaleString('en-US')}</span>
                         </div>
                       </div>
                     </>

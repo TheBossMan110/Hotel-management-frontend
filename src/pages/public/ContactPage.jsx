@@ -79,7 +79,7 @@ export default function ContactPage() {
       </div>
 
       <p style="margin:0;font-size:12px;color:rgba(248,244,239,0.3);">
-        📅 Received: ${new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' })} PKT
+        📅 Received: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Karachi' })} PKT
         &nbsp;·&nbsp;
         Reply directly to: <a href="mailto:${form.email}" style="color:#C9A84C;text-decoration:none;">${form.email}</a>
       </p>

@@ -250,7 +250,7 @@ export const getRoomsByHotel    = (hotelId)  => mockRooms.filter(r => r.id.start
 export const getRoomsByCity     = (cityName) => mockRooms.filter(r => r.city === cityName)
 export const getRoomsByProvince = (province) => mockRooms.filter(r => r.province === province)
 export const getRoomById        = (id)       => mockRooms.find(r => r.id === id || r._id === id)
-export const formatPKR          = (amount)   => `PKR ${Number(amount).toLocaleString('en-PK')}`
+export const formatPKR          = (amount)   => `PKR ${Number(amount).toLocaleString('en-US')}`
 
 export const mockStaff  = []
 export const mockGuests = []

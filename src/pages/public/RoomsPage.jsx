@@ -23,7 +23,7 @@ const STATUS_CONFIG = {
 }
 const AMENITY_ICONS = { WiFi: Wifi, TV: Tv, 'Air Conditioning': Wind, 'Coffee Maker': Coffee, Jacuzzi: Bath }
 
-const pkr      = (n) => `PKR ${Number(n || 0).toLocaleString('en-PK')}`
+const pkr      = (n) => `PKR ${Number(n || 0).toLocaleString('en-US')}`
 const getPrice = (r) => r.price?.basePrice ?? r.price ?? 0
 const getRating    = (r) => typeof r.rating === 'object' ? (r.rating?.average ?? 4.5) : (r.rating ?? 4.5)
 const getReviews   = (r) => typeof r.rating === 'object' ? (r.rating?.count ?? r.reviews ?? 0) : (r.reviews ?? 0)
