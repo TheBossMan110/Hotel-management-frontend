@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { Suspense, lazy, useEffect } from 'react'
+import ScrollToTop from './components/ScrollToTop'
 import PublicLayout from './layouts/PublicLayout'
 import AdminLayout from './layouts/AdminLayout'
 import GuestLayout from './layouts/GuestLayout'
@@ -59,6 +60,7 @@ export default function App() {
 
   return (
     <>
+      <ScrollToTop />
       <Suspense fallback={<LoadingSpinner fullScreen />}>
         <Routes>
           {/* Public Routes */}

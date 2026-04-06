@@ -15,58 +15,83 @@ const localFallback = (msg) => {
   const m = msg.toLowerCase().trim()
 
   // Greetings
-  if (/^(hi|hello|hey|yo|wassup|watsup|sup|hola|salam|assalam)/i.test(m))
-    return `Hey there! 👋 Welcome to Grand Azure Pakistan! I'm Azure, your AI concierge. How can I help you today?\n\n🏨 Room booking\n🛎️ Hotel services\n💳 Billing queries\n🔧 Report an issue`
+  if (/^(hi|hello|hey|yo|wassup|watsup|sup|hola|salam|assalam|good morning|good evening|good afternoon)/i.test(m))
+    return `Heyyy! 👋 Welcome to Grand Azure Pakistan! I'm Azure, your AI concierge and I'm SO happy you're here! 😊\n\nHow can I make your day better? I can help with:\n\n🏨 Room booking & availability\n🛎️ Hotel services & amenities\n💳 Billing & invoices\n🔧 Report an issue\n\nJust ask me anything! 🌟`
 
-  if (/^(how are you|how r u|how's it going|what's up)/i.test(m))
-    return `I'm doing great, thanks for asking! 😊 Ready to help you with anything hotel-related. What do you need?`
+  // How are you / small talk
+  if (/how are you|how r u|how's it going|what's up|how do you do|how u doing/i.test(m))
+    return `I'm doing amazing, thank you for asking! 😊✨ It always makes my day when someone checks in on me haha!\n\nI'm ready to help you with whatever you need. What's on your mind? 🏨`
+
+  // Who are you
+  if (/who are you|what are you|what's your name|your name/i.test(m))
+    return `I'm Azure! 🤖✨ Your friendly AI concierge at Grand Azure Pakistan. Think of me as your personal hotel assistant — I know everything about our rooms, services, dining, and more!\n\nWhat can I help you with today?`
+
+  // Compliments
+  if (/you('re| are) (great|amazing|awesome|cool|nice|helpful|good|the best)/i.test(m))
+    return `Aww, you're making me blush! 😊💛 Thank you so much! I try my best to be helpful. You're pretty awesome yourself!\n\nAnything else I can help you with? 🌟`
+
+  // Jokes / fun
+  if (/tell me a joke|joke|funny|make me laugh/i.test(m))
+    return `Haha okay here's one! 😄\n\nWhy did the hotel guest bring a ladder? Because they wanted a room with a VIEW! 🏔️😂\n\n*ba dum tss* 🥁\n\nOkay okay, I know my jokes need work 😅 But you know what doesn't? Our rooms and services! Need help with anything? 🏨`
 
   // Booking
   if (/book|reserv|room/i.test(m))
-    return `Great choice! 🏨 To book a room:\n\n1. Browse our rooms at the **Rooms** page\n2. Select your dates and room type\n3. Click **Book Now**\n\nWe have Standard, Deluxe, Suite, and Presidential rooms. Would you like to know more about any particular type?`
+    return `Great choice! 🏨✨ Booking is super easy:\n\n1. Head to the **Rooms** page and browse our collection\n2. Pick your dates and room type\n3. Click **Book Now** — done! 🎉\n\nWe have Standard, Deluxe, Suite, and Presidential rooms. Each one is gorgeous! Would you like to know more about any particular type? 💫`
 
   // Prices
-  if (/price|cost|rate|how much|tariff/i.test(m))
-    return `Here are our room rates (per night):\n\n🛏️ Standard: Rs. 8,000 - 12,000\n🛏️ Deluxe: Rs. 15,000 - 22,000\n👑 Suite: Rs. 30,000 - 45,000\n🏰 Presidential: Rs. 60,000+\n\nRates vary by season. Check the Rooms page for current availability!`
+  if (/price|cost|rate|how much|tariff|expensive|cheap|budget/i.test(m))
+    return `Here are our room rates (per night) 💰:\n\n🛏️ Standard: PKR 8,000 - 12,000\n🛏️ Deluxe: PKR 15,000 - 22,000\n👑 Suite: PKR 30,000 - 45,000\n🏰 Presidential: PKR 60,000+\n\nRates vary by season and availability. Check the **Rooms** page for the latest prices! The best deal? Book directly — no middleman fees! 😉`
 
   // Check-in/out
   if (/check.?in|check.?out|time/i.test(m))
-    return `⏰ Our timing:\n\n🟢 Check-in: 2:00 PM onwards\n🔴 Check-out: 12:00 PM\n\nEarly check-in or late check-out can be arranged at the front desk (subject to availability).`
+    return `⏰ Here's our timing:\n\n🟢 Check-in: 2:00 PM onwards\n🔴 Check-out: 12:00 PM\n\nNeed early check-in or late check-out? No worries! Just ask the front desk and we'll try our best to accommodate you 😊`
 
   // Services
-  if (/service|amenity|amenities|spa|gym|pool|restaurant|wifi/i.test(m))
-    return `We offer premium services! ✨\n\n🍽️ Fine dining restaurant\n💆 Luxury spa & wellness\n🏊 Rooftop infinity pool\n🏋️ 24/7 fitness center\n📶 High-speed WiFi\n🚗 Valet parking\n👔 Laundry & dry cleaning\n🛎️ 24/7 room service\n\nAnything specific you'd like to know about?`
+  if (/service|amenity|amenities|spa|gym|pool|restaurant|wifi|swim|food|dine|dining/i.test(m))
+    return `Oh you're gonna love this! We offer premium services! ✨\n\n🍽️ Fine dining restaurant (the food is *chef's kiss* 👨‍🍳)\n💆 Luxury spa & wellness center\n🏊 Rooftop infinity pool\n🏋️ 24/7 fitness center\n📶 High-speed WiFi everywhere\n🚗 Valet parking\n👔 Laundry & dry cleaning\n🛎️ 24/7 room service\n\nAnything specific you'd like to know more about? 😊`
 
   // Contact
   if (/contact|phone|call|email|address|location|where/i.test(m))
-    return `📍 Grand Azure Pakistan\n📞 +92 (42) 111-222-333\n📧 info@grandazure.pk\n📍 Lahore, Pakistan\n\nOur front desk is available 24/7!`
+    return `Here's how to reach us! 📱\n\n📍 Grand Azure Pakistan\n📞 +92 (42) 111-222-333\n📧 info@grandazure.pk\n📍 Lahore, Pakistan\n\nOur front desk team is available 24/7 and they're amazing! Don't hesitate to call anytime 😊`
 
   // Help
   if (/help|support|assist/i.test(m))
-    return `I'm here to help! 🤝 I can assist with:\n\n🏨 Room bookings & availability\n💰 Pricing information\n🛎️ Hotel services & amenities\n⏰ Check-in/check-out times\n📞 Contact information\n🔧 Reporting issues\n\nJust ask away!`
+    return `Of course, I'm here for you! 🤝💛\n\nI can help with:\n\n🏨 Room bookings & availability\n💰 Pricing information\n🛎️ Hotel services & amenities\n⏰ Check-in/check-out times\n📞 Contact information\n🔧 Reporting issues\n📋 Your booking details\n\nJust ask away — no question is too small! 😊`
 
   // Cancel
   if (/cancel/i.test(m))
-    return `To cancel a booking:\n\n1. Go to **My Bookings** page\n2. Find your booking\n3. Click the **Cancel** button\n\nFree cancellation is available up to 24 hours before check-in. Contact front desk for special cases.`
+    return `No worries, cancellations happen! Here's how:\n\n1. Go to **My Bookings** page\n2. Find your booking\n3. Click the **Cancel** button\n\n✅ Free cancellation up to 24 hours before check-in\n⚠️ Late cancellations may have a fee\n\nNeed help with something specific? I'm here! 😊`
 
   // Invoice / payment
-  if (/invoice|bill|payment|pay/i.test(m))
-    return `💳 For billing queries:\n\n1. Go to **My Invoices** page to view all invoices\n2. Download PDF receipts anytime\n3. We accept Cash, Credit Card, Bank Transfer\n\nNeed help with a specific invoice? Contact our front desk!`
+  if (/invoice|bill|payment|pay|receipt/i.test(m))
+    return `Got it! 💳 For billing stuff:\n\n1. Go to **My Invoices** page to see all your invoices\n2. Download PDF receipts anytime you need them\n3. We accept Cash, Credit Card, and Bank Transfer\n\nNeed help with a specific invoice? Just reach out to our front desk and they'll sort it out! 😊`
 
-  // Code / non-hotel
-  if (/code|html|css|javascript|python|programming|hack/i.test(m))
-    return `I appreciate your curiosity! 😊 But I'm your hotel concierge — I can only help with hotel-related queries like bookings, services, and amenities. For technical queries, you'd need a different assistant!\n\nAnything hotel-related I can help with?`
+  // Code / non-hotel / tech
+  if (/code|html|css|javascript|python|programming|hack|program|develop|software/i.test(m))
+    return `Haha nice try! 😄 I'm flattered you think I'm that smart, but I'm your hotel concierge — not a developer! 💻➡️🏨\n\nBUT I CAN help you book an amazing room, find the best spa treatment, or order some incredible room service! What sounds good? 🌟`
+
+  // Weather
+  if (/weather|rain|hot|cold|temperature/i.test(m))
+    return `Great question! ☀️ I don't have live weather data, but I can tell you our hotel is comfy year-round! We've got great AC in summer and cozy heating in winter 😊\n\nFor current weather, check a weather app — but no matter what it says outside, it's always perfect inside Grand Azure! 🏨✨`
 
   // Thank you
-  if (/thank|thanks|thx|appreciate/i.test(m))
-    return `You're welcome! 😊 It was my pleasure to help. If you need anything else during your stay, don't hesitate to ask! 🏨✨`
+  if (/thank|thanks|thx|appreciate|shukriya|shukria/i.test(m))
+    return `You're so welcome! 😊💛 It's genuinely my pleasure to help. That's what I'm here for!\n\nIf you need anything else — literally anything — just pop back and say hi. I'm always here! 🏨✨\n\nHave an amazing day! 🌟`
 
   // Bye
-  if (/bye|goodbye|see ya|later/i.test(m))
-    return `Goodbye! 👋 Thank you for choosing Grand Azure Pakistan. We hope to see you soon! Have a wonderful day! 🌟`
+  if (/bye|goodbye|see ya|later|good night|gn|take care/i.test(m))
+    return `Aww, bye bye! 👋😊 It was lovely chatting with you! Thank you for choosing Grand Azure Pakistan.\n\nCome back anytime — I'll be right here waiting! Have a wonderful day/night! 🌟✨\n\nTake care! 💛`
 
-  // Default
-  return `I'd love to help! 😊 I'm your hotel concierge and can assist with:\n\n🏨 Room bookings & availability\n💰 Pricing\n🛎️ Services & amenities\n⏰ Check-in/out times\n📞 Contact info\n\nCould you rephrase your question or pick one of the topics above?`
+  // Feelings / emotional
+  if (/sad|bored|tired|lonely|stressed|happy|excited/i.test(m))
+    return `Aww, I hear you! 😊 You know what always helps? A little luxury and pampering! \n\nHow about:\n🍽️ Some amazing room service comfort food?\n💆 A relaxing spa session?\n🏊 A dip in our infinity pool?\n\nSometimes all you need is a little treat-yourself moment! What sounds good? 🌟`
+
+  // Non-hotel / random
+  if (/politics|religion|personal|dating|relationship/i.test(m))
+    return `Haha, that's a bit outside my expertise! 😅 I'm all about making your hotel stay absolutely perfect.\n\nBut hey, need help with rooms, dining, spa, or anything hotel-related? I'm your person! 🏨💛`
+
+  // Default — friendly and inviting
+  return `Hmm, that's an interesting one! 😊 I might not have the perfect answer for that, but I'm great with hotel stuff!\n\nHere's what I can definitely help you with:\n\n🏨 Room bookings & availability\n💰 Pricing & packages\n🛎️ Services & amenities\n⏰ Check-in/out info\n📞 Contact details\n\nTry asking about any of these — I promise I'll give you an amazing answer! 😄✨`
 }
 
 export default function ChatBot() {

@@ -77,7 +77,7 @@ export default function GuestServices() {
   const [submitError, setSubmitError] = useState(null)
   const [submitted, setSubmitted] = useState(false)
 
-  const activeBooking = myBookings.find(b => b.status === 'checked-in')
+  const activeBooking = myBookings.find(b => ['pending', 'confirmed', 'checked-in'].includes(b.status))
 
   useEffect(() => {
     fetchMyBookings()
@@ -94,7 +94,7 @@ export default function GuestServices() {
 
   const handleSubmit = async () => {
     if (!activeBooking && selectedService.id !== 'transportation') {
-      setSubmitError('You need an active (checked-in) booking to request services.')
+      setSubmitError('You need an active booking to request services. Please make a reservation first.')
       return
     }
 
@@ -156,7 +156,7 @@ export default function GuestServices() {
       ) : (
         <div className="p-4 rounded-xl text-sm font-body"
           style={{ background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', color: 'rgba(234,179,8,0.9)' }}>
-          You don't have an active check-in. Service requests for in-room services require a checked-in booking.
+          You don't have an active booking. Please make a reservation to request in-room services.
         </div>
       )}
 
